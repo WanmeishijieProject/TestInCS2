@@ -18,7 +18,6 @@ namespace JKLightSourceLib.Command
             NumberFormatInfo ni = new NumberFormatInfo();
             strValue = "0x" + strValue;
             QChannelValue = Convert.ToUInt16(strValue, 16);
-            SetCmdState();
         }
     }
 }

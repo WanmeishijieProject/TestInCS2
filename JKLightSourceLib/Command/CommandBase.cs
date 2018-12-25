@@ -55,7 +55,7 @@ namespace JKLightSourceLib.Command
         {
             return SyncEvent.WaitOne(TimeOut);
         }
-        protected void SetCmdState()
+        public void SetCmdState()
         {
             SyncEvent.Set();
         }

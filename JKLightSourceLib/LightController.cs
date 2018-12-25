@@ -99,6 +99,7 @@ namespace JKLightSourceLib
             {
                 case EnumCommand.GetLightValue:
                     CmdReadValue.FromByteArray(e.RawData);
+                    CmdReadValue.SetCmdState();
                     break;
                 default:
                     break;
