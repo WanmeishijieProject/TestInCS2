@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LinearRoomMvtemLib", "Linea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvtomTestGUI", "MvtomTestGUI\MvtomTestGUI.csproj", "{7FD3AF1D-AFE5-460B-98A7-ADF620008DBE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "硬件触发相机拍照", "硬件触发相机拍照\硬件触发相机拍照.csproj", "{271393BC-4A05-449C-8A71-94C7A6DACE52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JKLightSourceLib", "JKLightSourceLib\JKLightSourceLib.csproj", "{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +43,14 @@ Global
 		{7FD3AF1D-AFE5-460B-98A7-ADF620008DBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7FD3AF1D-AFE5-460B-98A7-ADF620008DBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7FD3AF1D-AFE5-460B-98A7-ADF620008DBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{271393BC-4A05-449C-8A71-94C7A6DACE52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{271393BC-4A05-449C-8A71-94C7A6DACE52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{271393BC-4A05-449C-8A71-94C7A6DACE52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{271393BC-4A05-449C-8A71-94C7A6DACE52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

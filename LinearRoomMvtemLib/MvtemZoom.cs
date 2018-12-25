@@ -28,8 +28,8 @@ namespace LinearRoomMvtemLib
         CmdReadHomePuseError cmdReadHomePuseError = new CmdReadHomePuseError();
         CmdReadPuseError cmdReadPuseError = new CmdReadPuseError();
 
-        public EventHandler<PuseChangedArgs> OnPuseChanged;
-        public EventHandler<MotionStateChangedArgs> OnStateChanged;
+        public event EventHandler<PuseChangedArgs> OnPuseChanged;
+        public event EventHandler<MotionStateChangedArgs> OnStateChanged;
         #endregion
 
 
