@@ -10,5 +10,6 @@ namespace JKLightSourceLib.Command
     {
         public override EnumChannel Channel { get; set; }
         public override EnumCommand Cmd => EnumCommand.CloseLight;
+        public override int ExpectResultLength => 1;
     }
 }

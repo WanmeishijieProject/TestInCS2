@@ -44,45 +44,36 @@ namespace JKLightSourceLib
             {
                 Channel = channel,
             };
-            SendCmd(Cmd);
-            Recieve(out RxPackage pkg);
-            Cmd.FromByteArray(pkg.RawData);
+            ExcuteCmd(Cmd, out RxPackage pkg);
             return Cmd.QChannelValue;
-           
         }
 
         public void WriteValue(EnumChannel Channel, UInt16 Value)
         {
-            var Cmd = new CommandWriteValue()
+            ExcuteCmd(new CommandWriteValue()
             {
                 Channel = Channel,
                 Value = Value,
-            };
-            SendCmd(Cmd);
-            Recieve(out RxPackage pkg);
+            }, out RxPackage pkg);
         }
 
         public void OpenChannelLight(EnumChannel Channel, UInt16 InitValue)
         {
-            var Cmd = new CommandOpenLight()
+            ExcuteCmd(new CommandOpenLight()
             {
                 Value = InitValue,
                 Channel = Channel
-            };
-            SendCmd(Cmd);
-            Recieve(out RxPackage pkg);
+            }, out RxPackage pkg);
         }
 
         public void CloseChannelLight(EnumChannel Channel)
         {
-            var Cmd = new CommandCloseLight()
+            ExcuteCmd(new CommandCloseLight()
             {
                 Channel = Channel
-            };
-            SendCmd(Cmd);
-            Recieve(out RxPackage pkg);
+            }, out RxPackage pkg);
         }
-        private void SendCmd(CommandBase Cmd)
+        private void ExcuteCmd(CommandBase Cmd)
         {
             lock (_lock)
             {
@@ -91,11 +82,12 @@ namespace JKLightSourceLib
             }
         }
 
-        private void Recieve(out RxPackage pkg, int TimeOut=1000)
+        private void ExcuteCmd(CommandBase cmd, out RxPackage pkg, int TimeOut=1000)
         {
+            ExcuteCmd(cmd);
             pkg = new RxPackage()
             {
-                PackageSize = 1
+                PackageSize = cmd.ExpectResultLength,
             };
             var StartTime = DateTime.Now.Ticks;
             int len = Comport.BytesToRead;
@@ -106,7 +98,10 @@ namespace JKLightSourceLib
                 if (TimeSpan.FromTicks((DateTime.Now.Ticks - StartTime)).TotalSeconds >= (TimeOut / 1000.0))
                     throw new Exception("time for waiting result");
                 if (pkg.IsPackageFind)
+                {
+                    cmd.FromByteArray(pkg.RawData);
                     break;
+                }
             }
         }
        

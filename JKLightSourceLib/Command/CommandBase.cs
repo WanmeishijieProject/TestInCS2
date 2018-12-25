@@ -17,6 +17,7 @@ namespace JKLightSourceLib.Command
         protected AutoResetEvent SyncEvent = new AutoResetEvent(false);
         public abstract EnumCommand Cmd { get; }
         public abstract EnumChannel Channel { get; set; }
+        public abstract int ExpectResultLength { get; }
         public virtual UInt16 Value
         {
             get { return 0; }

@@ -10,6 +10,7 @@ namespace JKLightSourceLib.Command
     public class CommandReadValue : CommandBase
     {
         public override EnumCommand Cmd => EnumCommand.GetLightValue;
+        public override int ExpectResultLength => 8;
         public override EnumChannel Channel { get; set; }
         public UInt16 QChannelValue { get; set; }
         public override void FromByteArray(byte[] RawData)
