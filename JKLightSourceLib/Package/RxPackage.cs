@@ -11,45 +11,60 @@ namespace JKLightSourceLib.Package
     public class RxPackage
     {
         Queue<byte> DataRecieveQueue = new Queue<byte>();
-        bool IsHeaderFind = false;
+        public bool IsHeaderFind { get; private set; }
+        public bool IsPackageFind { get; private set; }
+        public byte[] RawData { private set; get; }
         private byte PACKAGE_HEADER = (byte)'#';
-        private int PACKAGE_SIZE = 8;
+        public int PackageSize { private get; set; }
         public event EventHandler<PackageRecieveArgs> OnPackageRecieved;
+        public RxPackage()
+        {
+            IsHeaderFind = false;
+            IsPackageFind = false;
+        }
         public void AddByte(byte bt)
         {
             if (!IsHeaderFind && bt == PACKAGE_HEADER)
             {
                 IsHeaderFind = true;
                 DataRecieveQueue.Enqueue(bt);
+                if (PackageSize == 1)
+                {
+                    IsPackageFind = true;
+                    return;
+                }
             }
             else if (IsHeaderFind)
             {
                 DataRecieveQueue.Enqueue(bt);
-                if (DataRecieveQueue.Count == PACKAGE_SIZE)
+                if (DataRecieveQueue.Count == PackageSize)
                 {
-                   
-                    var data = DataRecieveQueue.ToArray();
-                    var CalcXOR = CheckXor.GetStringXOR(data, 0, data.Length - 2);
+
+                    RawData = DataRecieveQueue.ToArray();
+                    var CalcXOR = CheckXor.GetStringXOR(RawData, 0, RawData.Length - 2);
 
                     //Clear queue
                     foreach (var it in DataRecieveQueue)
                         DataRecieveQueue.Dequeue();
 
-                    if (data[PACKAGE_SIZE - 1] == CalcXOR[1] && data[PACKAGE_SIZE - 2] == CalcXOR[0])
+                    if (RawData[PackageSize - 1] == CalcXOR[1] && RawData[PackageSize - 2] == CalcXOR[0])
                     {
                        
                         OnPackageRecieved?.Invoke(this, new PackageRecieveArgs()
                         {
-                            RawData = data,
-                            Cmd=(EnumCommand)data[1]
+                            RawData = this.RawData,
+                            Cmd=(EnumCommand)RawData[1]
                         });
+                        IsPackageFind = true;
                     }
                     else
                     {
                         IsHeaderFind = false;
+                        IsPackageFind = false;
                     }
                 }
             }
         }
+      
     }
 }

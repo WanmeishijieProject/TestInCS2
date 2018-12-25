@@ -14,8 +14,6 @@ namespace JKLightSourceLib
     {
         private SerialPort Comport=null;
         private object _lock = new object();
-        CommandReadValue CmdReadValue = null;
-        RxPackage PackageOperate = new RxPackage();
 
         public JKLightSource(int ComportNO, int Baudrate)
         {
@@ -33,10 +31,7 @@ namespace JKLightSourceLib
             if (Comport.IsOpen)
                 Comport.Close();
             Comport.Open();
-            PackageOperate.OnPackageRecieved += PackageOperate_OnPackageRecieved;
-            Comport.DataReceived += Comport_DataReceived;
         }
-
 
         public void Close()
         {
@@ -45,37 +40,47 @@ namespace JKLightSourceLib
 
         public UInt16 ReadValue(EnumChannel channel)
         {
-            CmdReadValue = new CommandReadValue()
+            var Cmd = new CommandReadValue()
             {
-                 Channel=channel
+                Channel = channel,
             };
-            SendCmd(CmdReadValue);
-            CmdReadValue.WaitForResult();
-            return CmdReadValue.QChannelValue;
+            SendCmd(Cmd);
+            Recieve(out RxPackage pkg);
+            Cmd.FromByteArray(pkg.RawData);
+            return Cmd.QChannelValue;
            
         }
 
         public void WriteValue(EnumChannel Channel, UInt16 Value)
         {
-            SendCmd(new CommandWriteValue() {
-                 Channel=Channel,
-                 Value=Value,
-            });
+            var Cmd = new CommandWriteValue()
+            {
+                Channel = Channel,
+                Value = Value,
+            };
+            SendCmd(Cmd);
+            Recieve(out RxPackage pkg);
         }
 
         public void OpenChannelLight(EnumChannel Channel, UInt16 InitValue)
         {
-            SendCmd(new CommandOpenLight() {
-                 Value=InitValue,
-                 Channel=Channel
-            });
+            var Cmd = new CommandOpenLight()
+            {
+                Value = InitValue,
+                Channel = Channel
+            };
+            SendCmd(Cmd);
+            Recieve(out RxPackage pkg);
         }
 
         public void CloseChannelLight(EnumChannel Channel)
         {
-            SendCmd(new CommandCloseLight() {
-                Channel=Channel
-            });
+            var Cmd = new CommandCloseLight()
+            {
+                Channel = Channel
+            };
+            SendCmd(Cmd);
+            Recieve(out RxPackage pkg);
         }
         private void SendCmd(CommandBase Cmd)
         {
@@ -86,24 +91,25 @@ namespace JKLightSourceLib
             }
         }
 
-        private void Comport_DataReceived(object sender, SerialDataReceivedEventArgs e)
+        private void Recieve(out RxPackage pkg, int TimeOut=1000)
         {
+            pkg = new RxPackage()
+            {
+                PackageSize = 1
+            };
+            var StartTime = DateTime.Now.Ticks;
             int len = Comport.BytesToRead;
             for (int i = 0; i < len; i++)
-                PackageOperate.AddByte((byte)Comport.ReadByte());
-        }
-
-        private void PackageOperate_OnPackageRecieved(object sender, PackageRecieveArgs e)
-        {
-            switch (e.Cmd)
+                pkg.AddByte((byte)Comport.ReadByte());
+            while (true)
             {
-                case EnumCommand.GetLightValue:
-                    CmdReadValue.FromByteArray(e.RawData);
-                    CmdReadValue.SetCmdState();
-                    break;
-                default:
+                if (TimeSpan.FromTicks((DateTime.Now.Ticks - StartTime)).TotalSeconds >= (TimeOut / 1000.0))
+                    throw new Exception("time for waiting result");
+                if (pkg.IsPackageFind)
                     break;
             }
         }
+       
+
     }
 }

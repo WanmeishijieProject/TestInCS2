@@ -26,7 +26,6 @@ namespace JKLightSourceLib.Command
         protected BinaryWriter Writer;
         public byte[] ToByteArray()
         {
-            ResetCmdState();
             using (var MemoryStream = new MemoryStream())
             {
                 Writer = new BinaryWriter(MemoryStream);
@@ -50,18 +49,6 @@ namespace JKLightSourceLib.Command
         private string Uint16ToString(UInt16 Value)
         {
             return string.Format("{0:X3}",Value);
-        }
-        public bool WaitForResult(int TimeOut = DEFAULT_TIMEOUT)
-        {
-            return SyncEvent.WaitOne(TimeOut);
-        }
-        public void SetCmdState()
-        {
-            SyncEvent.Set();
-        }
-        protected void ResetCmdState()
-        {
-            SyncEvent.Reset();
         }
 
         
