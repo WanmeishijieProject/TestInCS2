@@ -32,6 +32,7 @@ namespace JKLightSourceLib.Command
                 Writer = new BinaryWriter(MemoryStream);
                 Writer.Write(HEADER);
                 Writer.Write((byte)Cmd);
+                Writer.Write((byte)Channel);
                 var data = Uint16ToString(Value);
                 Writer.Write(data[0]);
                 Writer.Write(data[1]);

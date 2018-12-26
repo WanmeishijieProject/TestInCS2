@@ -90,11 +90,12 @@ namespace JKLightSourceLib
                 PackageSize = cmd.ExpectResultLength,
             };
             var StartTime = DateTime.Now.Ticks;
-            int len = Comport.BytesToRead;
-            for (int i = 0; i < len; i++)
-                pkg.AddByte((byte)Comport.ReadByte());
+           
             while (true)
             {
+                int len = Comport.BytesToRead;
+                for (int i = 0; i < len; i++)
+                    pkg.AddByte((byte)Comport.ReadByte());
                 if (TimeSpan.FromTicks((DateTime.Now.Ticks - StartTime)).TotalSeconds >= (TimeOut / 1000.0))
                     throw new Exception("time for waiting result");
                 if (pkg.IsPackageFind)

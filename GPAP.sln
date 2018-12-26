@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "硬件触发相机拍照", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JKLightSourceLib", "JKLightSourceLib\JKLightSourceLib.csproj", "{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestLightLib", "TestLightLib\TestLightLib.csproj", "{8E9B7792-25FC-4AD6-9827-58D0B06C69AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE88631B-A3E7-4D49-BB14-12EA9DFB9B20}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E9B7792-25FC-4AD6-9827-58D0B06C69AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E9B7792-25FC-4AD6-9827-58D0B06C69AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E9B7792-25FC-4AD6-9827-58D0B06C69AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E9B7792-25FC-4AD6-9827-58D0B06C69AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -44,7 +44,8 @@ namespace JKLightSourceLib.Package
                     var CalcXOR = CheckXor.GetStringXOR(RawData, 0, RawData.Length - 2);
 
                     //Clear queue
-                    foreach (var it in DataRecieveQueue)
+                    int dataLen = DataRecieveQueue.Count;
+                    for(int i=0;i< dataLen; i++)
                         DataRecieveQueue.Dequeue();
 
                     if (RawData[PackageSize - 1] == CalcXOR[1] && RawData[PackageSize - 2] == CalcXOR[0])
