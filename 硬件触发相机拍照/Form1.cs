@@ -25,7 +25,7 @@ namespace 硬件触发相机拍照
         {
             
             HOperatorSet.OpenFramegrabber("GigEVision", 0, 0, 0, 0, 0, 0, "progressive",
-                -1, "default", -1, "false", "default", "Cam_Up", 0, -1, out hv_AcqHandle);
+                -1, "default", -1, "false", "default", "CamTop", 0, -1, out hv_AcqHandle);
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerSelector", "FrameStart");
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "grab_timeout", 10000);
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerMode", "On");

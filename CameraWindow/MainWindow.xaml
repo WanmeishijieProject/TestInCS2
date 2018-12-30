@@ -1,0 +1,68 @@
+﻿<Window x:Class="CameraWindow.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:UserCtrls="clr-namespace:CameraWindow.UserCtrls"
+        xmlns:ignore="http://www.galasoft.ch/ignore"
+        mc:Ignorable="d ignore"
+        Height="300"
+        Width="300"
+        Title="MVVM Light Application"
+        DataContext="{Binding Main, Source={StaticResource Locator}}"
+        Loaded="Window_Loaded">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Skins/MainSkin.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding Gesture="Control+1" 
+              Command="{Binding CommandMaxCamera}" CommandParameter="1"/>
+        <KeyBinding Gesture="Control+2"  
+              Command="{Binding CommandMaxCamera}" CommandParameter="2"/>
+        <KeyBinding Gesture="Control+3" 
+              Command="{Binding CommandMaxCamera}" CommandParameter="3"/>
+        <KeyBinding Gesture="Control+4"  
+              Command="{Binding CommandMaxCamera}" CommandParameter="4"/>
+        <KeyBinding Gesture="Control+Q"  
+              Command="{Binding CommandResumeCamera}"/>
+    </Window.InputBindings>
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[0].Row}" x:Name="Cam1"
+                               Grid.Column="{Binding GridDataModelCollect[0].Col}" Margin="1" 
+                               Grid.RowSpan="{Binding GridDataModelCollect[0].RowSpan}" 
+                               Grid.ColumnSpan="{Binding GridDataModelCollect[0].ColSpan}" 
+                               Visibility="{Binding GridDataModelCollect[0].Visible}"
+                               />
+        <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[1].Row}" x:Name="Cam2"
+                               Grid.Column="{Binding GridDataModelCollect[1].Col}" Margin="1" 
+                               Grid.RowSpan="{Binding GridDataModelCollect[1].RowSpan}" 
+                               Grid.ColumnSpan="{Binding GridDataModelCollect[1].ColSpan}" 
+                               Visibility="{Binding GridDataModelCollect[1].Visible}"
+                               />
+        <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[2].Row}" x:Name="Cam3"
+                               Grid.Column="{Binding GridDataModelCollect[2].Col}" Margin="1" 
+                               Grid.RowSpan="{Binding GridDataModelCollect[2].RowSpan}" 
+                               Grid.ColumnSpan="{Binding GridDataModelCollect[2].ColSpan}" 
+                               Visibility="{Binding GridDataModelCollect[2].Visible}"
+                               
+                               />
+        <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[3].Row}" x:Name="Cam4"
+                               Grid.Column="{Binding GridDataModelCollect[3].Col}" Margin="1" 
+                               Grid.RowSpan="{Binding GridDataModelCollect[3].RowSpan}" 
+                               Grid.ColumnSpan="{Binding GridDataModelCollect[3].ColSpan}" 
+                               Visibility="{Binding GridDataModelCollect[3].Visible}"
+                               />
+    </Grid>
+</Window>
