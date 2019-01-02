@@ -11,14 +11,18 @@ namespace CRC12
         const int CHAR_SIZE = 8;
         const int CRC_SIZE = 12;  
         static UInt32 PATTERN = 0x180F; //X12+x11 + x3 + x2 + x + 1  // 180F
-
+         
         static void Main(string[] args)
         {
-           var res= crc12(new byte[] { 0x32});
+            var res= crc12(new byte[] { 0x32});
+            
+            Console.WriteLine(Add(1,2,3,4));
+            Console.WriteLine(Add(1, 2, 3, 4,4,6,7,8,8,9));
+            Console.WriteLine(Test(56789,(x,y,z)=> { return (x*y*z).ToString();}));
             Console.WriteLine(res);
             Console.ReadKey();
         }
-           static UInt32 crc12(byte[] data)
+        static UInt32 crc12(byte[] data)
             {
                 int len = data.Length;
                 UInt32 remainder = 0;
@@ -48,5 +52,16 @@ namespace CRC12
                 }
                 return remainder;
             }
+        private static int Add(params int[] Args)
+        {
+            int sum = 0;
+            foreach (var it in Args)
+                sum += it;
+            return sum;
+        }
+        private static string Test(int x, Func<int,double,double,string> func)
+        {
+            return x.ToString() + "    " + func(1, 2, 4);
+        }
     }
 }
