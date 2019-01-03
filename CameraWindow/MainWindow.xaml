@@ -44,25 +44,29 @@
                                Grid.RowSpan="{Binding GridDataModelCollect[0].RowSpan}" 
                                Grid.ColumnSpan="{Binding GridDataModelCollect[0].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[0].Visible}"
+                               CamWindowHandle="{Binding WindowsList[0],Mode=OneWayToSource}"
+                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"
                                />
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[1].Row}" x:Name="Cam2"
                                Grid.Column="{Binding GridDataModelCollect[1].Col}" Margin="1" 
                                Grid.RowSpan="{Binding GridDataModelCollect[1].RowSpan}" 
                                Grid.ColumnSpan="{Binding GridDataModelCollect[1].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[1].Visible}"
-                               />
+                               CamWindowHandle="{Binding WindowsList[1],Mode=OneWayToSource}"
+                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"/>
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[2].Row}" x:Name="Cam3"
                                Grid.Column="{Binding GridDataModelCollect[2].Col}" Margin="1" 
                                Grid.RowSpan="{Binding GridDataModelCollect[2].RowSpan}" 
                                Grid.ColumnSpan="{Binding GridDataModelCollect[2].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[2].Visible}"
-                               
-                               />
+                               CamWindowHandle="{Binding WindowsList[2],Mode=OneWayToSource}"
+                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"/>
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[3].Row}" x:Name="Cam4"
                                Grid.Column="{Binding GridDataModelCollect[3].Col}" Margin="1" 
                                Grid.RowSpan="{Binding GridDataModelCollect[3].RowSpan}" 
                                Grid.ColumnSpan="{Binding GridDataModelCollect[3].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[3].Visible}"
-                               />
+                               CamWindowHandle="{Binding WindowsList[3],Mode=OneWayToSource}"
+                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"/>
     </Grid>
 </Window>

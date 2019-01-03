@@ -76,6 +76,8 @@ namespace CameraWindow.Model
                 }
             }
         }
+       
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged([CallerMemberName] string PropertyName = "")

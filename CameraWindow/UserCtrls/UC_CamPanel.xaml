@@ -6,8 +6,9 @@
               xmlns:halcon="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:local="clr-namespace:CameraWindow.UserCtrls"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
+             d:DesignHeight="450" d:DesignWidth="800"
+             Loaded="UserControl_Loaded">
     <Grid>
-        <halcon:HWindowControlWPF MouseDoubleClick="HWindowControlWPF_MouseDoubleClick"/>
+        <halcon:HWindowControlWPF MouseDoubleClick="HWindowControlWPF_MouseDoubleClick" x:Name="CamPanel" SizeChanged="CamPanel_SizeChanged"/>
     </Grid>
 </UserControl>

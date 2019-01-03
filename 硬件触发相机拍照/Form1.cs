@@ -77,7 +77,7 @@ namespace 硬件触发相机拍照
                             HOperatorSet.SetTposition(hWindowControl1.HalconWindow, 0, 0);
                             HOperatorSet.WriteString(this.hWindowControl1.HalconWindow, (i++).ToString());
 
-                        })); //把图像显示出来（这里是委托方式显示)
+                        })); //把图像显示出来
                     }
                     else
                     {
