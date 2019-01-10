@@ -22,6 +22,9 @@ namespace CameraWindow.UserCtrls
     /// </summary>
     public partial class UC_CamPanel : UserControl
     {
+        public event EventHandler BegineChangeSize;
+
+
         public UC_CamPanel()
         {
             InitializeComponent();
@@ -32,9 +35,6 @@ namespace CameraWindow.UserCtrls
         {
             Console.WriteLine("Down");
         }
-
-        public int X { get; set; }
-
 
         /// <summary>
         /// The <see cref="CamWindowHandle" /> dependency property's name.

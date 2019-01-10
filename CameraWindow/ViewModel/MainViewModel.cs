@@ -7,11 +7,15 @@ using System.Windows;
 using VisionLib;
 using static VisionLib.VisionDefinitions;
 using HalconDotNet;
-using VisionLib.CommonVisionStep;
 using System.Threading;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
+using VisionDemoLib;
+using System.ComponentModel;
+using System.IO;
+using Newtonsoft.Json;
+using CameraWindow.Config;
 
 namespace CameraWindow.ViewModel
 {
@@ -21,20 +25,28 @@ namespace CameraWindow.ViewModel
         #region Field
         HalconVision Vision = HalconVision.Instance;
         List<CameraInfoModel> CamInfoDataList = null;
+        ManualResetEvent mr = new ManualResetEvent(true);
+        CancellationTokenSource cts = null;
+        Task MonitorTask = null;
+        bool _isRunning = false;
+        CameraConfigManager CamConfigMgr = null;
+        string FILE_CONFIG = Directory.GetCurrentDirectory()+ @"/Config/SystemConfig.json";
         #endregion
 
         #region Construct
         public MainViewModel()
         {
+            LoadConfig();
 
-            CamInfoDataList = Vision.FindCamera(EnumCamType.GigEVision, new List<string>() { "Cam_Up" }, out List<string> ErrorList);
+            CamInfoDataList = Vision.FindCamera(EnumCamType.GigEVision, new List<string>() { "CamBack","CamUp" }, out List<string> ErrorList);
             CameraCollection = new ObservableCollection<string>();
+            Vision.SetVisionSync(ref mr);   //设置同步mr
 
             foreach (var data in CamInfoDataList)
             {
                 CameraCollection.Add(data.ActualName);
             }
-
+            CameraCollection.Add("1");
             //初始化样式
             GridDataModelCollect = new ObservableCollection<CameraGridDataModel>();
             SetGridData(CameraCollection.Count);
@@ -61,26 +73,11 @@ namespace CameraWindow.ViewModel
                         int IndexBaseZero = int.Parse(str) - 1;
                         if (IndexBaseZero >= 0 && IndexBaseZero < CameraCollection.Count)
                         {
+                            mr.Reset();
                             SetMaxCameraView(IndexBaseZero);
-                            var data = CamInfoDataList[0];
-                            if (!Vision.IsCamOpen(data.CamID))
-                                Vision.OpenCam(data.CamID);
-                            Vision.AttachCamWIndow(data.CamID, "Cam1", WindowsList[data.CamID]);
-                            var StartTime = DateTime.Now.Ticks;
-                            while (true)
-                            {
-                                Vision.GrabImage(data.CamID);
-                                //Vision.disp_message(WindowsList[data.CamID], data.ActualName, "image", 10, 10, "red", "false");
-                                if (TimeSpan.FromTicks(DateTime.Now.Ticks - StartTime).TotalSeconds > 50)
-                                    break;
-                            }
-                            //Vision.DisplayLines(data.CamID, new List<VisionLineData>() { new VisionLineData(0, 0, 200, 200) });
-                            Vision.SaveImage(data.CamID, EnumImageType.Window, "C:\\公司文件资料", "1234567.jpg", WindowsList[data.CamID]);
-
-                            Vision.CloseCam(data.CamID);
+                            mr.Set();
                         }
                     });
-                   
                 });
             }
         }
@@ -89,40 +86,52 @@ namespace CameraWindow.ViewModel
             get
             {
                 return new RelayCommand(() => {
+                    mr.Reset();
                     ResumeGridDataList();
+                    mr.Set();
                 });
             }
         }
 
-        public RelayCommand<string> CommandOnSizeChanged
+
+        public RelayCommand CommandStartMonitor
         {
-            get {
-                return new RelayCommand<string>(str =>
+            get { return new RelayCommand(()=> {
+                if (MonitorTask == null || MonitorTask.IsCanceled || MonitorTask.IsCompleted)
                 {
-                    try
-                    {
-                        int nCamID = int.Parse(str.Substring(str.Length - 1))-1;
-                        var Cam = from list in CamInfoDataList where list.CamID == nCamID select list;
-                        if (Cam.Count() != 0)
+                    cts = new CancellationTokenSource();
+                    MonitorTask = new Task(()=> {
+                        var data = CamInfoDataList[0];
+                        if (!Vision.IsCamOpen(data.CamID))
+                            Vision.OpenCam(data.CamID);
+                        Vision.AttachCamWIndow(data.CamID, "Cam1", WindowsList[data.CamID]);
+                        var StartTime = DateTime.Now.Ticks;
+                        while (!cts.IsCancellationRequested)
                         {
-                            Vision.GetSyncSp(out AutoResetEvent Se, out object Lock, nCamID);
-                            if (Lock != null)
-                            {
-                                lock (Lock)
-                                {
-                                    if (Se != null)
-                                        Se.Set();
-                                }
-                            }
+                            IsRunning = true;
+                            Vision.GrabImage(data.CamID, true, true);
+                            //Vision.disp_message(WindowsList[data.CamID], data.ActualName, "image", 10, 10, "red", "false");
+                            if (TimeSpan.FromTicks(DateTime.Now.Ticks - StartTime).TotalSeconds > 100)
+                                break;
                         }
-                    }
-                    catch
-                    {
-
-                    }
-                });
-            }
+                        IsRunning = false;
+                        Vision.CloseCam(data.CamID);
+                    }, cts.Token);
+                    MonitorTask.Start();
+                    
+                }
+            }); }
         }
+
+        public RelayCommand CommandStopMonitor
+        {
+            get { return new RelayCommand(()=> {
+                cts.Cancel();
+                MonitorTask.Wait();
+            }); }
+        }
+       
+
         #endregion
 
         #region Property
@@ -142,6 +151,17 @@ namespace CameraWindow.ViewModel
         {
             get;
             set;
+        }
+
+        public bool IsRunning {
+            get { return _isRunning; }
+            set {
+                if (_isRunning != value)
+                {
+                    _isRunning = value;
+                    RaisePropertyChanged();
+                }
+            }
         }
         #endregion
 
@@ -240,7 +260,29 @@ namespace CameraWindow.ViewModel
         {
             ResetGridData(CameraCollection.Count);
         }
+
+        private void LoadConfig()
+        {
+            try
+            {
+                var jsonStr = File.ReadAllText(FILE_CONFIG);
+                CamConfigMgr = JsonConvert.DeserializeObject<CameraConfigManager>(jsonStr);
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
         #endregion
+
+        public void SetSyncState(bool IsSet = true)
+        {
+            if (IsSet)
+                mr.Set();
+            else
+                mr.Reset();
+        }
 
     }
 }

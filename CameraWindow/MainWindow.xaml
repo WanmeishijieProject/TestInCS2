@@ -10,7 +10,12 @@
         Width="300"
         Title="MVVM Light Application"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
-        Loaded="Window_Loaded">
+        Loaded="Window_Loaded"
+        SourceInitialized="Window_SourceInitialized" 
+        WindowState="Maximized" 
+        WindowStartupLocation="CenterScreen"
+        StateChanged="Window_StateChanged"
+        >
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -34,6 +39,7 @@
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition Height="40"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>
@@ -45,7 +51,7 @@
                                Grid.ColumnSpan="{Binding GridDataModelCollect[0].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[0].Visible}"
                                CamWindowHandle="{Binding WindowsList[0],Mode=OneWayToSource}"
-                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"
+                               
                                />
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[1].Row}" x:Name="Cam2"
                                Grid.Column="{Binding GridDataModelCollect[1].Col}" Margin="1" 
@@ -53,20 +59,30 @@
                                Grid.ColumnSpan="{Binding GridDataModelCollect[1].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[1].Visible}"
                                CamWindowHandle="{Binding WindowsList[1],Mode=OneWayToSource}"
-                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"/>
+                               />
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[2].Row}" x:Name="Cam3"
                                Grid.Column="{Binding GridDataModelCollect[2].Col}" Margin="1" 
                                Grid.RowSpan="{Binding GridDataModelCollect[2].RowSpan}" 
                                Grid.ColumnSpan="{Binding GridDataModelCollect[2].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[2].Visible}"
                                CamWindowHandle="{Binding WindowsList[2],Mode=OneWayToSource}"
-                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"/>
+                               />
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[3].Row}" x:Name="Cam4"
                                Grid.Column="{Binding GridDataModelCollect[3].Col}" Margin="1" 
                                Grid.RowSpan="{Binding GridDataModelCollect[3].RowSpan}" 
                                Grid.ColumnSpan="{Binding GridDataModelCollect[3].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[3].Visible}"
                                CamWindowHandle="{Binding WindowsList[3],Mode=OneWayToSource}"
-                               OnControlSizeChangedCommand="{Binding CommandOnSizeChanged}"/>
+                                />
+
+        <Grid Grid.Column="1" Grid.Row="2" Width="300" HorizontalAlignment="Right">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"  Margin="5,2" Content="开始" Command="{Binding CommandStartMonitor}" IsEnabled="{Binding IsRunning, Converter={StaticResource Bool2Enable}, ConverterParameter=Start}"/>
+            <Button Grid.Column="1" Margin="5,2"  Content="停止" Command="{Binding CommandStopMonitor}" IsEnabled="{Binding IsRunning, Converter={StaticResource Bool2Enable}, ConverterParameter=Stop}"/>
+        </Grid>
+       
     </Grid>
 </Window>
