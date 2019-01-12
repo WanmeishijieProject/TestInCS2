@@ -1,0 +1,95 @@
+﻿<Window x:Class="CakeTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:UserCtrls="clr-namespace:CakeTest.UserCtrls"
+        xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
+        xmlns:dxr="http://schemas.devexpress.com/winfx/2008/xaml/ribbon"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        mc:Ignorable="d ignore"
+        Height="300"
+        Width="300"
+        Title="CakeTest"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Skins/MainSkin.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+        <dxr:RibbonControl ApplicationButtonLargeIcon="./Images/AppIcon.png" RibbonStyle="Office2007">
+            <dxr:RibbonDefaultPageCategory>
+                <dxr:RibbonPage x:Name="rpHome" Caption="主页">
+                    <dxr:RibbonPageGroup Caption="运行">
+                        <dxb:BarButtonItem 
+                            Content="运行" 
+                            RibbonStyle="Large" Glyph="./Images/start.png"
+                            Command="{Binding StartStationCommand}"
+                            IsEnabled="{Binding SystemState, Converter={StaticResource SystemState2Enable}, ConverterParameter=Start}"/>
+         
+                        <dxb:BarButtonItem 
+                            Content="停止" 
+                            RibbonStyle="Large" Glyph="./Images/stop.png"
+                            Command="{Binding StopStationCommand}"
+                             IsEnabled="{Binding SystemState, Converter={StaticResource SystemState2Enable}, ConverterParameter=Stop}"/>
+                    </dxr:RibbonPageGroup>
+                    <dxr:RibbonPageGroup Caption="视图">
+                        <dxb:BarButtonItem 
+                            Content="运行界面" 
+                            RibbonStyle="Large" Glyph="./Images/home.png"
+                            Command="{Binding BtnHomeCommand}"
+                           />
+                        <dxb:BarButtonItem 
+                            Content="报警信息" 
+                            RibbonStyle="Large" Glyph="./Images/warning.png"
+                            Command="{Binding BtnWarningCommand}"
+                            />
+                    </dxr:RibbonPageGroup>
+                </dxr:RibbonPage>
+           
+            </dxr:RibbonDefaultPageCategory>
+           
+        </dxr:RibbonControl>
+       
+        <materialDesign:Snackbar Grid.Row="0" IsActive="{Binding ShowSnakeInfoBar}" x:Name="SnackbarTwo" Background="Black" Width="{Binding Width, ElementName=StationInfoGrid}">
+            <materialDesign:SnackbarMessage ActionContent="信息" Foreground="White" ActionCommand="{Binding SnackBarActionCommand}">
+                <materialDesign:SnackbarMessage.Content>
+                    <Grid>
+                        <TextBlock Text="{Binding SnakeLastError}" VerticalAlignment="Center" TextWrapping="Wrap" Foreground="Red"/>
+                    </Grid>
+                </materialDesign:SnackbarMessage.Content>
+            </materialDesign:SnackbarMessage>
+        </materialDesign:Snackbar>
+        <Grid Grid.Row="1">
+            <UserCtrls:UC_ErrorInfo Visibility="{Binding ViewIndex, Converter={StaticResource int2Visibility},ConverterParameter=2}"/>
+            <UserCtrls:UC_HomeView Visibility="{Binding ViewIndex, Converter={StaticResource int2Visibility},ConverterParameter=1}"/>
+        </Grid>
+        <Grid Grid.Row="2" Background="SteelBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="40"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="160"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="版本:" VerticalAlignment="Center" Margin="5" Foreground="White"/>
+            <TextBlock Grid.Column="1"  Text="操作员" VerticalAlignment="Center" Margin="5" Foreground="White"/>
+            <TextBlock Grid.Column="2" Text="User" VerticalAlignment="Center" Margin="5" Foreground="White"/>
+            <Grid Name="StationInfoGrid" Grid.Column="3" Background="{StaticResource ThemColor}"/>
+            <materialDesign:Badged Grid.Column="4" Badge="{Binding ErrorCount}" BadgeBackground="LightBlue" BadgeForeground="{Binding ErrorCount,Converter={StaticResource Int2BackgroundBrush}}" Width="150">
+                <Button Background="{Binding ErrorCount,Converter={StaticResource Int2BackgroundBrush}}" Width="150" Command="{Binding BtnWarningCommand}" Content="报警信息"/>
+            </materialDesign:Badged>
+        </Grid>
+    </Grid>
+</Window>

@@ -25,6 +25,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisionDemoLib", "VisionDemo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisionLib", "..\..\重构Vision\VisionLib\VisionLib.csproj", "{46D1BC17-348C-4E00-B145-4DFD687918FF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CameraWinform", "CameraWinform\CameraWinform.csproj", "{44293C0D-FE08-43D3-900E-4FE964A0B333}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CakeTest", "CakeTest\CakeTest.csproj", "{17B17397-B047-4791-A8B5-DED48FA8BD22}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,14 @@ Global
 		{46D1BC17-348C-4E00-B145-4DFD687918FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46D1BC17-348C-4E00-B145-4DFD687918FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46D1BC17-348C-4E00-B145-4DFD687918FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44293C0D-FE08-43D3-900E-4FE964A0B333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44293C0D-FE08-43D3-900E-4FE964A0B333}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44293C0D-FE08-43D3-900E-4FE964A0B333}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44293C0D-FE08-43D3-900E-4FE964A0B333}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17B17397-B047-4791-A8B5-DED48FA8BD22}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17B17397-B047-4791-A8B5-DED48FA8BD22}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17B17397-B047-4791-A8B5-DED48FA8BD22}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17B17397-B047-4791-A8B5-DED48FA8BD22}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -30,7 +30,7 @@ namespace CameraWindow.ViewModel
         Task MonitorTask = null;
         bool _isRunning = false;
         CameraConfigManager CamConfigMgr = null;
-        string FILE_CONFIG = Directory.GetCurrentDirectory()+ @"/Config/SystemConfig.json";
+        string FILE_CONFIG = AppDomain.CurrentDomain.BaseDirectory + "/Config/SystemConfig.json";
         #endregion
 
         #region Construct
@@ -38,15 +38,18 @@ namespace CameraWindow.ViewModel
         {
             LoadConfig();
 
-            CamInfoDataList = Vision.FindCamera(EnumCamType.GigEVision, new List<string>() { "CamBack","CamUp" }, out List<string> ErrorList);
+            var listName = new List<string>();
+            foreach (var it in CamConfigMgr.Cameras)
+                listName.Add(it.CamName);
+            
+            CamInfoDataList = Vision.FindCamera(EnumCamType.GigEVision, listName, out List<string> ErrorList);
             CameraCollection = new ObservableCollection<string>();
-            Vision.SetVisionSync(ref mr);   //设置同步mr
-
             foreach (var data in CamInfoDataList)
             {
                 CameraCollection.Add(data.ActualName);
             }
             CameraCollection.Add("1");
+
             //初始化样式
             GridDataModelCollect = new ObservableCollection<CameraGridDataModel>();
             SetGridData(CameraCollection.Count);
@@ -73,9 +76,9 @@ namespace CameraWindow.ViewModel
                         int IndexBaseZero = int.Parse(str) - 1;
                         if (IndexBaseZero >= 0 && IndexBaseZero < CameraCollection.Count)
                         {
-                            mr.Reset();
+                            SetResizingFlag(true);
                             SetMaxCameraView(IndexBaseZero);
-                            mr.Set();
+                            SetResizingFlag(false);
                         }
                     });
                 });
@@ -86,9 +89,9 @@ namespace CameraWindow.ViewModel
             get
             {
                 return new RelayCommand(() => {
-                    mr.Reset();
+                    SetResizingFlag(true);
                     ResumeGridDataList();
-                    mr.Set();
+                    SetResizingFlag(false);
                 });
             }
         }
@@ -103,14 +106,14 @@ namespace CameraWindow.ViewModel
                     MonitorTask = new Task(()=> {
                         var data = CamInfoDataList[0];
                         if (!Vision.IsCamOpen(data.CamID))
-                            Vision.OpenCam(data.CamID);
+                            Vision.OpenCam(data.CamID,EnumColorSpace.Rgb);
                         Vision.AttachCamWIndow(data.CamID, "Cam1", WindowsList[data.CamID]);
                         var StartTime = DateTime.Now.Ticks;
                         while (!cts.IsCancellationRequested)
                         {
                             IsRunning = true;
-                            Vision.GrabImage(data.CamID, true, true);
-                            //Vision.disp_message(WindowsList[data.CamID], data.ActualName, "image", 10, 10, "red", "false");
+                            Vision.GrabImage(data, true, true);
+                            Vision.DisplayImage(data);
                             if (TimeSpan.FromTicks(DateTime.Now.Ticks - StartTime).TotalSeconds > 100)
                                 break;
                         }
@@ -276,12 +279,15 @@ namespace CameraWindow.ViewModel
         }
         #endregion
 
-        public void SetSyncState(bool IsSet = true)
+        public void SetResizingFlag(bool IsSizing = true)
         {
-            if (IsSet)
-                mr.Set();
-            else
-                mr.Reset();
+            lock (Vision.SyncData.VisionLock)
+            {
+                Vision.SyncData.IsNewSizing = IsSizing;  
+                Console.WriteLine(IsSizing? "Sizing" : "Done");
+                if (IsSizing)
+                    Vision.SyncData.IsOldSizing = IsSizing;
+            }
         }
 
     }

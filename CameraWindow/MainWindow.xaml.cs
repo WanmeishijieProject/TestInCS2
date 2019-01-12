@@ -48,7 +48,8 @@ namespace CameraWindow
 
         public const Int32 SC_MAXIMIZE = 0xF030;
         public const Int32 SC_MINIMIZE = 0xF020;
-        public const Int32 SC_RESTORE = 0xF030;
+        public const Int32 SC_STORE = 0xF012;
+        public const Int32 SC_RESTORE = 0xF120;
 
         private IntPtr WinProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, ref Boolean handled)
         {
@@ -56,18 +57,18 @@ namespace CameraWindow
             switch (msg)
             {
                 case WM_ENTERSIZEMOVE:
-                    (DataContext as MainViewModel).SetSyncState(false);
+                    (DataContext as MainViewModel).SetResizingFlag(true);
                     break;
 
                 case WM_EXITSIZEMOVE:
-                    (DataContext as MainViewModel).SetSyncState(true);
+                    (DataContext as MainViewModel).SetResizingFlag(false);
                     break;
 
                 case WM_SYSCOMMAND:
-                    if ((int)wParam == SC_MAXIMIZE || (int)wParam == SC_MINIMIZE || (int)wParam == SC_RESTORE)
+                    if ((int)wParam == SC_MAXIMIZE || (int)wParam == SC_MINIMIZE || 
+                        (int)wParam == SC_RESTORE || (int)wParam == SC_STORE)
                     {
-                        (DataContext as MainViewModel).SetSyncState(false);
-                        Console.WriteLine("Begin");
+                        (DataContext as MainViewModel).SetResizingFlag(true);
                     }
                     break;
 
@@ -77,8 +78,7 @@ namespace CameraWindow
 
         private void Window_StateChanged(object sender, EventArgs e)
         {
-            (DataContext as MainViewModel).SetSyncState(true);
-            Console.WriteLine("End");
+            (DataContext as MainViewModel).SetResizingFlag(false);
         }
     }
 }

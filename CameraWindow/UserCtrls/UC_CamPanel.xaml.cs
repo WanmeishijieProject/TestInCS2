@@ -100,7 +100,7 @@ namespace CameraWindow.UserCtrls
                     var StartTime = DateTime.Now.Ticks;
                     while (true)
                     {
-                        Task.Delay(20).Wait();
+                        Task.Delay(100).Wait();
                         CamWindowHandle = CamPanel.HalconWindow;
                         Console.WriteLine(CamWindowHandle.Handle);
                         if ((int)CamWindowHandle.Handle != -1 || TimeSpan.FromTicks(DateTime.Now.Ticks-StartTime).TotalSeconds>5)

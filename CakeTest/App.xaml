@@ -1,0 +1,30 @@
+﻿<Application x:Class="CakeTest.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:CakeTest.ViewModel"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:Convert="clr-namespace:CakeTest.Converters"
+			 xmlns:ignore="http://www.galasoft.ch/ignore"
+             StartupUri="MainWindow.xaml"
+             mc:Ignorable="d ignore">
+    
+    <Application.Resources>
+        <!--Global View Model Locator-->
+        <ResourceDictionary>
+            <vm:ViewModelLocator x:Key="Locator"
+                             d:IsDataSource="True" />
+
+            <Convert:SystemState2Enable x:Key="SystemState2Enable"/>
+            <Convert:Int2BackgroundBrush x:Key="Int2BackgroundBrush"/>
+            <Convert:MsgType2ForeBrush x:Key="MsgType2ForeBrush"/>
+            <Convert:MsgType2Image x:Key="MsgType2Image"/>
+            <Convert:int2Visibility x:Key="int2Visibility"/>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resource/MDStyle.xaml"/>
+                <ResourceDictionary Source="Resource/StylesResourceDictionary.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+    
+</Application>
