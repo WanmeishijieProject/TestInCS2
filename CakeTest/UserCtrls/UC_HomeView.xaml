@@ -16,7 +16,13 @@
         </Grid.ColumnDefinitions>
         <halcon:HWindowControlWPF x:Name="Cam1"/>
         <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition Height="40"/>
+            </Grid.RowDefinitions>
             <prgd:PropertyGridControl ExpandCategoriesWhenSelectedObjectChanged="True" SelectedObject="{Binding ParaSetting.Para}"/>
+            <Button Grid.Row="1" Content="保存" HorizontalAlignment="Right" Width="120" Margin="5" Style="{StaticResource RoundButtonStyle1}" 
+                    Background="{StaticResource ThemColor}" Command="{Binding CommandSavePara}"/>
         </Grid>
     </Grid>
 </UserControl>

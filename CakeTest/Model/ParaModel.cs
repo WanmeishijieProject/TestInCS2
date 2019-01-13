@@ -20,21 +20,30 @@ namespace CakeTest.Model
             MaxL1 = 200;
             MaxL2 = 200;
             TriggerType = EnumSignalType.RisingEdge;
-
+            OutputLogicNG = EnumOutputLogic.True;
         }
 
-        [CategoryAttribute("参数设置"), DescriptionAttribute("Min value of L1")]
+        [CategoryAttribute("参数设置"), DescriptionAttribute("干燥剂 L1 边的最小值")]
         public double MinL1 { get; set; }
-        [CategoryAttribute("参数设置"), DescriptionAttribute("Max value of L1")]
+        [CategoryAttribute("参数设置"), DescriptionAttribute("干燥剂 L1 边的最大值")]
         public double MaxL1 { get; set; }
 
-        [CategoryAttribute("参数设置"), DescriptionAttribute("Min value of L2")]
+        [CategoryAttribute("参数设置"), DescriptionAttribute("干燥剂 L2 边的最小值")]
         public double MinL2 { get; set; }
-        [CategoryAttribute("参数设置"), DescriptionAttribute("Max value of L2")]
+
+        [CategoryAttribute("参数设置"), DescriptionAttribute("干燥剂 L2 边的最大值")]
         public double MaxL2 { get; set; }
+
+        [CategoryAttribute("参数设置"), DescriptionAttribute("是否使用Output输出")]
+        public EnumUseOutput UseOutput { get; set; }
+
+        [CategoryAttribute("参数设置"), DescriptionAttribute("当NG时的输出逻辑")]
+        public EnumOutputLogic OutputLogicNG { get; set; }
 
         [CategoryAttribute("参数设置"), DescriptionAttribute("设置硬件触发方式")]
         public EnumSignalType TriggerType { get; set; }
+
+
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void RaisePropertyChanged([CallerMemberName]string PropertyName = "")

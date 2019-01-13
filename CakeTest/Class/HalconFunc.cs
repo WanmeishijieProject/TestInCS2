@@ -507,14 +507,19 @@ namespace CakeTest.Class
                     HOperatorSet.SetColor(WindowHandle, "green");
                     HOperatorSet.DispObj(ho_Rectangle, WindowHandle);
                     HOperatorSet.WriteString(WindowHandle, "OK");
-                    HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", 1);
+                    if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                    {
+                        HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 1 : 0);
+                    }
                 }
                 else
                 {
-
                     HOperatorSet.SetColor(WindowHandle, "red");
                     HOperatorSet.WriteString(WindowHandle, "NG");
-                    HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", 0);
+                    if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                    {
+                        HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 0 : 1);
+                    }
                 }
 
 

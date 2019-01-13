@@ -19,5 +19,15 @@ namespace CakeTest.Class
         RisingEdge,
         FailingEdge,
     }
+    public enum EnumOutputLogic
+    {
+        False,
+        True, 
+    }
+    public enum EnumUseOutput
+    {
+        Use,
+        NotUse,
+    }
 
 }

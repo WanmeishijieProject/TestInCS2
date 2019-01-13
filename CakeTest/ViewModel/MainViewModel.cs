@@ -34,7 +34,7 @@ namespace CakeTest.ViewModel
         CancellationTokenSource cts = new CancellationTokenSource();
         HalconFunc VisionCommonFunc = new HalconFunc();
         bool _showSnakeInfoBar = false;
-        HardwareInfo Devie = new HardwareInfo();
+        
         string FILE_CONFIG = "./Config/SystemConfig.json";
         #endregion
 
@@ -164,6 +164,13 @@ namespace CakeTest.ViewModel
                 return new RelayCommand(() => ShowSnakeInfoBar = false);
             }
         }
+        public RelayCommand ClearMessageCommand
+        {
+            get
+            {
+                return new RelayCommand(() => SystemErrorMessageCollection.Clear());
+            }
+        }
         public RelayCommand StartStationCommand
         {
             get
@@ -205,7 +212,16 @@ namespace CakeTest.ViewModel
                 });
             }
         }
-
+        public RelayCommand CommandSavePara
+        {
+            get
+            {
+                return new RelayCommand(() => {
+                    SaveConfig();
+                });
+            }
+        }
+        
 
         #endregion
 
@@ -259,6 +275,20 @@ namespace CakeTest.ViewModel
                 var jsonStr = File.ReadAllText(FILE_CONFIG);
                 ParaSetting = JsonConvert.DeserializeObject<SettingParaManager>(jsonStr);
 
+            }
+            catch (Exception ex)
+            {
+                ShowErrorinfo("加载配置文件出错");
+                MessageBox.Show(ex.Message);
+            }
+        }
+        private void SaveConfig()
+        {
+            try
+            {
+                var jsonStr = JsonConvert.SerializeObject(ParaSetting);
+                File.WriteAllText(FILE_CONFIG,jsonStr);
+                MessageBox.Show("保存成功");
             }
             catch (Exception ex)
             {
