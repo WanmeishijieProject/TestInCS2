@@ -26,11 +26,12 @@ namespace CameraWindow.ViewModel
         HalconVision Vision = HalconVision.Instance;
         List<CameraInfoModel> CamInfoDataList = null;
         ManualResetEvent mr = new ManualResetEvent(true);
-        CancellationTokenSource cts = null;
-        Task MonitorTask = null;
+        CancellationTokenSource[] cts = new CancellationTokenSource[4];
+        Task[] MonitorTask = new Task[4] ;
         bool _isRunning = false;
         CameraConfigManager CamConfigMgr = null;
         string FILE_CONFIG = AppDomain.CurrentDomain.BaseDirectory + "/Config/SystemConfig.json";
+        string[] WindowNameArr = { "Cam1", "Cam2", "Cam3", "Cam4" };
         #endregion
 
         #region Construct
@@ -48,7 +49,6 @@ namespace CameraWindow.ViewModel
             {
                 CameraCollection.Add(data.ActualName);
             }
-            CameraCollection.Add("1");
 
             //初始化样式
             GridDataModelCollect = new ObservableCollection<CameraGridDataModel>();
@@ -100,28 +100,27 @@ namespace CameraWindow.ViewModel
         public RelayCommand CommandStartMonitor
         {
             get { return new RelayCommand(()=> {
-                if (MonitorTask == null || MonitorTask.IsCanceled || MonitorTask.IsCompleted)
+                foreach (var CamInfo in CamInfoDataList)
                 {
-                    cts = new CancellationTokenSource();
-                    MonitorTask = new Task(()=> {
-                        var data = CamInfoDataList[0];
-                        if (!Vision.IsCamOpen(data.CamID))
-                            Vision.OpenCam(data.CamID,EnumColorSpace.Rgb);
-                        Vision.AttachCamWIndow(data.CamID, "Cam1", WindowsList[data.CamID]);
-                        var StartTime = DateTime.Now.Ticks;
-                        while (!cts.IsCancellationRequested)
-                        {
-                            IsRunning = true;
-                            Vision.GrabImage(data, true, true);
-                            Vision.DisplayImage(data);
-                            if (TimeSpan.FromTicks(DateTime.Now.Ticks - StartTime).TotalSeconds > 100)
-                                break;
-                        }
-                        IsRunning = false;
-                        Vision.CloseCam(data.CamID);
-                    }, cts.Token);
-                    MonitorTask.Start();
-                    
+
+                    if (MonitorTask[CamInfo.CamID] == null || MonitorTask[CamInfo.CamID].IsCanceled || MonitorTask[CamInfo.CamID].IsCompleted)
+                    {
+                        cts[CamInfo.CamID] = new CancellationTokenSource();
+                        MonitorTask[CamInfo.CamID] = new Task(() => {
+                            if (!Vision.IsCamOpen(CamInfo.CamID))
+                                Vision.OpenCam(CamInfo.CamID, EnumColorSpace.Rgb);
+                            Vision.AttachCamWIndow(CamInfo.CamID, WindowNameArr[CamInfo.CamID], WindowsList[CamInfo.CamID]);
+                            var StartTime = DateTime.Now.Ticks;
+                            while (!cts[CamInfo.CamID].IsCancellationRequested)
+                            {
+                                IsRunning = true;
+                                Vision.GrabImage(CamInfo, true, true);
+                                Vision.DisplayImage(CamInfo);
+                            }
+                            IsRunning = false;
+                        }, cts[CamInfo.CamID].Token);
+                        MonitorTask[CamInfo.CamID].Start();
+                    }
                 }
             }); }
         }
@@ -129,11 +128,25 @@ namespace CameraWindow.ViewModel
         public RelayCommand CommandStopMonitor
         {
             get { return new RelayCommand(()=> {
-                cts.Cancel();
-                MonitorTask.Wait();
+                foreach (var CamInfo in CamInfoDataList)
+                {
+                    cts[CamInfo.CamID].Cancel();
+                }
+                foreach (var CamInfo in CamInfoDataList)
+                {
+                    MonitorTask[CamInfo.CamID].Wait();
+                }
             }); }
         }
-       
+        public RelayCommand CommandCloseWindow
+        {
+            get
+            {
+                return new RelayCommand(() => {
+                    Vision.CloseAllCamera();
+                });
+            }
+        }
 
         #endregion
 

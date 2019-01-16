@@ -32,6 +32,7 @@ namespace CakeTest.UserCtrls
                 Task.Delay(500).Wait();
                 Application.Current.Dispatcher.Invoke(()=> {
                     (DataContext as MainViewModel).WindowHandle = Cam1.HalconWindow;
+                    (DataContext as MainViewModel).StartStationCommand.Execute(null);
                 });
             });
             

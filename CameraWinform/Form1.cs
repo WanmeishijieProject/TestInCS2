@@ -20,7 +20,7 @@ namespace CameraWinform
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            var str = DateTime.Now.GetDateTimeFormats();
         }
 
         private void BtnRun_Click(object sender, EventArgs e)

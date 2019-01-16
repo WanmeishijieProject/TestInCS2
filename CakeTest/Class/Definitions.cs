@@ -30,4 +30,17 @@ namespace CakeTest.Class
         NotUse,
     }
 
+    public enum EnumFontSize
+    {
+       Small=50,
+       Normal=70,
+       Big=90,
+    }
+
+    public enum EnumImageType
+    {
+        image,
+        window,
+    }
+
 }

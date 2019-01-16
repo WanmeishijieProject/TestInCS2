@@ -13,7 +13,9 @@ namespace CommonFile
     {
         private string UserKey = "";
         private HardwareInfo info = new HardwareInfo();
+#if REG
         private RegEditOp RegEditor = new RegEditOp();
+#endif
 
         private string LookTable = "PpVvWwXxQqRrSsTtUuJjKk2345LlMmNnAaBbCcDdEeFfGgHhIiOoYyZz016789!@#$%^&*()";
         string FilePath = "zrd.data";
@@ -38,7 +40,6 @@ namespace CommonFile
         {
             UserKey = info.GetCpuID();
             UserKey += info.GetDiskID();
-            UserKey += info.GetMacAddress();
             StringBuilder sb = new StringBuilder();
             foreach (var it in UserKey)
             {
@@ -92,7 +93,9 @@ namespace CommonFile
                     TimeOutType = (EnumTimeOut)nTimeout;
                     var Content = $"{RegisterKey.Substring(0,RegisterKey.Length - 1)}&{(int)TimeOutType}&{DateTime.Now.Ticks}";
                     File.WriteAllText(FilePath, Content);
+#if REG
                     RegEditor.WriteRegisterValue(Content);
+#endif
                     this.DaysLeft = TimeArr[nTimeout];
                     return true;
                 }
@@ -106,17 +109,23 @@ namespace CommonFile
         public bool CheckFile(out int DaysLeft)
         {
             DaysLeft = 0;
+#if REG
             if (File.Exists(FilePath) && RegEditor.IsRegistryKeyExist("smx"))
+#endif
             {
 #if TEST
                 MessageBox.Show("1");
 #endif
                 var content = File.ReadAllText(FilePath);
+#if REG
                 var Msg = RegEditor.ReadRegisterValue();
+#endif
 #if TEST
                 MessageBox.Show(Msg);
 #endif
+#if REG
                 if (content == Msg)
+#endif
                 {
                     var List = content.Split('&');
                     if (List.Count() == 3)

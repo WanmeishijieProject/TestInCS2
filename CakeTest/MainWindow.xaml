@@ -50,6 +50,9 @@
                             RibbonStyle="Large" Glyph="./Images/stop.png"
                             Command="{Binding StopStationCommand}"
                              IsEnabled="{Binding SystemState, Converter={StaticResource SystemState2Enable}, ConverterParameter=Stop}"/>
+
+     
+                        
                     </dxr:RibbonPageGroup>
                     <dxr:RibbonPageGroup Caption="视图">
                         <dxb:BarButtonItem 
@@ -62,6 +65,12 @@
                             RibbonStyle="Large" Glyph="./Images/warning.png"
                             Command="{Binding BtnWarningCommand}"
                             />
+
+                        <dxb:BarButtonItem 
+                            Content="保存图片" 
+                            RibbonStyle="Large" Glyph="./Images/Save.png"
+                            Command="{Binding CommandSaveImage}"
+                             />
                     </dxr:RibbonPageGroup>
                 </dxr:RibbonPage>
            

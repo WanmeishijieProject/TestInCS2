@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,7 +13,7 @@ namespace CakeTest.Class
     public class HalconFunc
     {
         private HTuple hv_AcqHandle;
-        private HObject ho_Image;
+        private HObject ho_Image,ho_image_Copy;
         HTuple hv_MLPHandle, hv_MLPHandle1;
         ParaModel ParaSetting;
         private void dev_open_window_fit_image(HObject ho_Image, HTuple hv_Row, HTuple hv_Column,
@@ -336,20 +337,22 @@ namespace CakeTest.Class
         public void OpenCamera(HTuple CamName)
         {
             HOperatorSet.OpenFramegrabber("GigEVision", 0, 0, 0, 0, 0, 0, "progressive",
-                        -1, "default", -1, "false", "default", CamName, 0, -1, out hv_AcqHandle);
+                        -1, "default", -1, "false", "default", "CamCake", 0, -1, out hv_AcqHandle);
             HOperatorSet.ReadClassMlp("mlp_1.gmc", out hv_MLPHandle);
             HOperatorSet.ReadClassMlp("mlp_2.gmc", out hv_MLPHandle1);
-        }
 
-        public void SetCameraPara(ParaModel Para)
-        {
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerSelector", "FrameStart");
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "grab_timeout", 400000);
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerMode", "On");
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "AcquisitionMode", "SingleFrame");
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerSource", "Line1");
-            HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerActivation", Para.TriggerType.ToString());
+            HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerActivation", ParaSetting.TriggerType.ToString());
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "ExposureMode", "Timed");
+            HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "ExposureTimeRaw", ParaSetting.ExposeTime);
+        }
+
+        public void SetCameraPara(ParaModel Para)
+        {
             ParaSetting = Para;
         }
 
@@ -404,17 +407,19 @@ namespace CakeTest.Class
 
             try
             {
-                ho_Image.Dispose();
                 //HOperatorSet.GrabImageAsync(out ho_Image, hv_AcqHandle, 100000);
-                HOperatorSet.GrabImage(out ho_Image, hv_AcqHandle);
-                //HOperatorSet.ReadImage(out ho_Image, @"C:\Code\Halcon\检测有无\图片1\13.bmp");
+                ho_Image.Dispose();
+                //HOperatorSet.GrabImage(out ho_Image, hv_AcqHandle);
+               
+                HOperatorSet.ReadImage(out ho_Image, @"C:\Code\Halcon\检测有无\图片1\13.bmp");
+                ho_image_Copy = ho_Image.SelectObj(1);
                 HOperatorSet.GetImageSize(ho_Image, out HTuple width, out HTuple height);
                 HOperatorSet.SetPart(WindowHandle, 0, 0, height, width);
                
 
 
                 HOperatorSet.SetTposition(WindowHandle, 10, 10);
-                set_display_font(WindowHandle, 50, "mono", "true", "false");
+                set_display_font(WindowHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
 
                 ho_Image1.Dispose();
                 ho_Image2.Dispose();
@@ -448,7 +453,7 @@ namespace CakeTest.Class
 
                 ho_SelectedRegions.Dispose();
                 HOperatorSet.SelectShape(ho_ConnectedRegions, out ho_SelectedRegions, "area",
-                    "and", 6000.2, 159205);
+                    "and", 6000.2, 259205);
                 ho_RegionUnion.Dispose();
                 HOperatorSet.Union1(ho_SelectedRegions, out ho_RegionUnion);
 
@@ -457,7 +462,7 @@ namespace CakeTest.Class
 
                 ho_RegionTrans.Dispose();
                 HOperatorSet.ShapeTrans(ho_RegionOpening, out ho_RegionTrans, "circle");
-    
+                HOperatorSet.AreaCenter(ho_RegionTrans,out HTuple CircleArea, out HTuple CircleRow, out HTuple CircleCol);
                 //HOperatorSet.SetDraw(WindowHandle, "margin");
                 //HOperatorSet.ClearWindow(WindowHandle);
                 //HOperatorSet.DispObj(ho_Image, WindowHandle);
@@ -470,6 +475,9 @@ namespace CakeTest.Class
                 HOperatorSet.ClassifyImageClassMlp(ho_ImageReduced, out ho_ClassRegionsNotRejected,
                     hv_MLPHandle1, 0.5);
 
+
+
+
                 ho_ObjectSelected1.Dispose();
                 HOperatorSet.SelectObj(ho_ClassRegionsNotRejected, out ho_ObjectSelected1,
                     4);
@@ -477,14 +485,29 @@ namespace CakeTest.Class
                 ho_RegionOpening1.Dispose();
                 HOperatorSet.OpeningCircle(ho_ObjectSelected1, out ho_RegionOpening1, 3.5);
 
-                ho_RegionFillUp.Dispose();
-                HOperatorSet.FillUp(ho_RegionOpening1, out ho_RegionFillUp);
+                //将中间的膨胀
+                HOperatorSet.Connection(ho_RegionOpening1, out HObject ConnectedRegProcess);
+                HOperatorSet.CountObj(ConnectedRegProcess, out HTuple number);
+                int R = 210;
+                HOperatorSet.GenEmptyObj(out HObject EmptObjProcess);
+                for (int i = 1; i < number; i++)
+                {
+                    HOperatorSet.SelectObj(ConnectedRegProcess, out HObject ObjSelectProcess, i);
+                    HOperatorSet.AreaCenter(ObjSelectProcess,out HTuple areaSelect, out HTuple rowSelect, out HTuple colSelect);
+                    if (rowSelect > CircleRow - R && rowSelect < CircleRow + R && colSelect > CircleCol - R && colSelect < CircleCol + R)
+                    {
+                        HOperatorSet.DilationCircle(ObjSelectProcess, out HObject regionDilationProcess, 10);
+                        HOperatorSet.ConcatObj(EmptObjProcess, regionDilationProcess,out EmptObjProcess);
+                        regionDilationProcess.Dispose();
+                    }
+                    ObjSelectProcess.Dispose();
+                }
+                HOperatorSet.Union1(EmptObjProcess, out HObject regUnionProcess);
 
-                ho_RegionClosing.Dispose();
-                HOperatorSet.ClosingCircle(ho_RegionFillUp, out ho_RegionClosing, 10);
+                //
 
                 ho_ConnectedRegions1.Dispose();
-                HOperatorSet.Connection(ho_RegionClosing, out ho_ConnectedRegions1);
+                HOperatorSet.Connection(regUnionProcess, out ho_ConnectedRegions1);
 
                 ho_SelectedRegions1.Dispose();
                 HOperatorSet.SelectShapeStd(ho_ConnectedRegions1, out ho_SelectedRegions1,
@@ -522,11 +545,23 @@ namespace CakeTest.Class
                     }
                 }
 
+                HOperatorSet.SetTposition(WindowHandle, 160, 10);
+                HOperatorSet.SetColor(WindowHandle, "green");
+                set_display_font(WindowHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
+                HOperatorSet.WriteString(WindowHandle, $"L1={hv_Length1}, L2={hv_Length2}");
 
             }
             catch (HalconException HDevExpDefaultException)
             {
-                ho_Image.Dispose();
+                HOperatorSet.SetTposition(WindowHandle, 10, 10);
+                set_display_font(WindowHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
+                HOperatorSet.SetColor(WindowHandle, "red");
+                HOperatorSet.WriteString(WindowHandle, "NG");
+                if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                {
+                    HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 0 : 1);
+                }
+
                 ho_Image1.Dispose();
                 ho_Image2.Dispose();
                 ho_Image3.Dispose();
@@ -551,7 +586,7 @@ namespace CakeTest.Class
                 ho_Rectangle.Dispose();
                 throw HDevExpDefaultException;
             }
-            ho_Image.Dispose();
+ 
             ho_Image1.Dispose();
             ho_Image2.Dispose();
             ho_Image3.Dispose();
@@ -579,5 +614,333 @@ namespace CakeTest.Class
             return true;
         }
 
+
+        public bool SaveImage(int nCamID, EnumImageType type, string filePath, HTuple hWindow, string fileName="")
+        {
+          
+            if (nCamID < 0)
+                return false;
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+            if(!Directory.Exists(filePath))
+                return false;
+            if (ho_image_Copy == null || ho_image_Copy.Key==IntPtr.Zero)
+                return false;
+            if (string.IsNullOrEmpty(fileName))
+            {
+                var DT = DateTime.Now;
+                fileName = $"{DT.Year}年{DT.Month}月{DT.Day}日 {DT.Hour}_{DT.Minute}_{DT.Second}_{DT.Millisecond}";
+            }
+               
+            switch (type)
+            {
+                case EnumImageType.image:
+                    HOperatorSet.WriteImage(ho_image_Copy, "jpeg", 0, $"{filePath}\\{fileName}.jpg");
+                    break;
+                case EnumImageType.window:
+                    HOperatorSet.DumpWindow(hWindow, "jpeg", $"{filePath}\\{fileName}.jpg");
+                    break;
+            }
+            ho_image_Copy.Dispose();
+            return true;
+        }
+
+        public void Action(HWindow hv_ExpDefaultWinHandle)
+        {
+
+            // Stack for temporary objects 
+            HObject[] OTemp = new HObject[20];
+            long SP_O = 0;
+
+            // Local iconic variables 
+
+            HObject ho_Image, ho_Image1, ho_Image2, ho_Image3;
+            HObject ho_ImageResult1, ho_ImageResult2, ho_ImageResult3;
+            HObject ho_ClassRegionsNotRejected, ho_ObjectSelected, ho_RegionOpening2;
+            HObject ho_ConnectedRegions, ho_SelectedRegions, ho_RegionUnion;
+            HObject ho_RegionOpening, ho_RegionTrans, ho_ImageReduced;
+            HObject ho_ObjectSelected1, ho_RegionOpening1, ho_RegionFillUp;
+            HObject ho_ConnectedRegions1, ho_EmptyObject, ho_ObjectSelected2 = null;
+            HObject ho_RegionDilation = null, ho_RegionUnion1, ho_ConnectedRegions2;
+            HObject ho_SelectedRegions1, ho_Rectangle;
+
+
+            // Local control variables 
+
+            HTuple hv_WindowHandle = new HTuple(), hv_MLPHandle;
+            HTuple hv_MLPHandle1, hv_Area2, hv_CircleRow, hv_CircleCol;
+            HTuple hv_Number, hv_R, hv_Index1, hv_Area3 = new HTuple();
+            HTuple hv_Row2 = new HTuple(), hv_Column2 = new HTuple(), hv_Row1;
+            HTuple hv_Column1, hv_Phi, hv_Length1, hv_Length2, hv_Area;
+            HTuple hv_Row, hv_Column;
+
+            // Initialize local and output iconic variables 
+            HOperatorSet.GenEmptyObj(out ho_Image);
+            HOperatorSet.GenEmptyObj(out ho_Image1);
+            HOperatorSet.GenEmptyObj(out ho_Image2);
+            HOperatorSet.GenEmptyObj(out ho_Image3);
+            HOperatorSet.GenEmptyObj(out ho_ImageResult1);
+            HOperatorSet.GenEmptyObj(out ho_ImageResult2);
+            HOperatorSet.GenEmptyObj(out ho_ImageResult3);
+            HOperatorSet.GenEmptyObj(out ho_ClassRegionsNotRejected);
+            HOperatorSet.GenEmptyObj(out ho_ObjectSelected);
+            HOperatorSet.GenEmptyObj(out ho_RegionOpening2);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions);
+            HOperatorSet.GenEmptyObj(out ho_RegionUnion);
+            HOperatorSet.GenEmptyObj(out ho_RegionOpening);
+            HOperatorSet.GenEmptyObj(out ho_RegionTrans);
+            HOperatorSet.GenEmptyObj(out ho_ImageReduced);
+            HOperatorSet.GenEmptyObj(out ho_ObjectSelected1);
+            HOperatorSet.GenEmptyObj(out ho_RegionOpening1);
+            HOperatorSet.GenEmptyObj(out ho_RegionFillUp);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions1);
+            HOperatorSet.GenEmptyObj(out ho_EmptyObject);
+            HOperatorSet.GenEmptyObj(out ho_ObjectSelected2);
+            HOperatorSet.GenEmptyObj(out ho_RegionDilation);
+            HOperatorSet.GenEmptyObj(out ho_RegionUnion1);
+            HOperatorSet.GenEmptyObj(out ho_ConnectedRegions2);
+            HOperatorSet.GenEmptyObj(out ho_SelectedRegions1);
+            HOperatorSet.GenEmptyObj(out ho_Rectangle);
+
+            try
+            {
+                ho_Image.Dispose();
+                //HOperatorSet.ReadImage(out ho_Image, new HTuple(new HTuple("C:/Code/Halcon/检测有无/图片1/") + 13) + ".bmp");
+                HOperatorSet.GrabImage(out ho_Image, hv_AcqHandle);
+                HOperatorSet.DispObj(ho_Image, hv_ExpDefaultWinHandle);
+
+                ho_image_Copy = ho_Image.SelectObj(1);
+                HOperatorSet.GetImageSize(ho_Image, out HTuple width, out HTuple height);
+                HOperatorSet.SetPart(hv_ExpDefaultWinHandle, 0, 0, height, width);
+
+                HOperatorSet.ReadClassMlp("mlp_1.gmc", out hv_MLPHandle);
+                HOperatorSet.ReadClassMlp("mlp_3.gmc", out hv_MLPHandle1);
+
+
+
+                HOperatorSet.SetTposition(hv_ExpDefaultWinHandle, 10, 10);
+                set_display_font(hv_ExpDefaultWinHandle, (int)ParaSetting.FontSize, "mono", "true", "false");
+
+                ho_Image1.Dispose();
+                ho_Image2.Dispose();
+                ho_Image3.Dispose();
+                HOperatorSet.Decompose3(ho_Image, out ho_Image1, out ho_Image2, out ho_Image3
+                    );
+                ho_ImageResult1.Dispose();
+                ho_ImageResult2.Dispose();
+                ho_ImageResult3.Dispose();
+                HOperatorSet.TransFromRgb(ho_Image1, ho_Image2, ho_Image3, out ho_ImageResult1,
+                    out ho_ImageResult2, out ho_ImageResult3, "hsv");
+                //HOperatorSet.DispObj(ho_Image3, hv_ExpDefaultWinHandle);
+                //HOperatorSet.SetColored(hv_ExpDefaultWinHandle, 12);
+
+                ho_ClassRegionsNotRejected.Dispose();
+                HOperatorSet.ClassifyImageClassMlp(ho_Image, out ho_ClassRegionsNotRejected,
+                    hv_MLPHandle, 0.3);
+
+                ho_ObjectSelected.Dispose();
+                HOperatorSet.SelectObj(ho_ClassRegionsNotRejected, out ho_ObjectSelected, 1);
+                ho_RegionOpening2.Dispose();
+                HOperatorSet.OpeningCircle(ho_ObjectSelected, out ho_RegionOpening2, 5);
+
+
+                ho_ConnectedRegions.Dispose();
+                HOperatorSet.Connection(ho_RegionOpening2, out ho_ConnectedRegions);
+                //area_center (ConnectedRegions, Area1, Row3, Column3)
+
+                ho_SelectedRegions.Dispose();
+                HOperatorSet.SelectShape(ho_ConnectedRegions, out ho_SelectedRegions, "area",
+                    "and", 6000.2, 309205);
+                ho_RegionUnion.Dispose();
+                HOperatorSet.Union1(ho_SelectedRegions, out ho_RegionUnion);
+
+                ho_RegionOpening.Dispose();
+                HOperatorSet.OpeningCircle(ho_RegionUnion, out ho_RegionOpening, 3.5);
+
+                ho_RegionTrans.Dispose();
+                HOperatorSet.ShapeTrans(ho_RegionOpening, out ho_RegionTrans, "circle");
+                //HOperatorSet.SetDraw(hv_ExpDefaultWinHandle, "fill");
+                //HOperatorSet.ClearWindow(hv_ExpDefaultWinHandle);
+                //HOperatorSet.DispObj(ho_Image, hv_ExpDefaultWinHandle);
+
+                //HOperatorSet.DispObj(ho_RegionTrans, hv_ExpDefaultWinHandle);
+
+                //HOperatorSet.SetDraw(hv_ExpDefaultWinHandle, "fill");
+                ho_ImageReduced.Dispose();
+                HOperatorSet.ReduceDomain(ho_Image, ho_RegionTrans, out ho_ImageReduced);
+                HOperatorSet.AreaCenter(ho_RegionTrans, out hv_Area2, out hv_CircleRow, out hv_CircleCol);
+
+                ho_ClassRegionsNotRejected.Dispose();
+                HOperatorSet.ClassifyImageClassMlp(ho_ImageReduced, out ho_ClassRegionsNotRejected,
+                    hv_MLPHandle1, 0.3);
+                //HOperatorSet.SetColored(hv_ExpDefaultWinHandle, 12);
+                //HOperatorSet.DispObj(ho_ClassRegionsNotRejected, hv_ExpDefaultWinHandle);
+                ho_ObjectSelected1.Dispose();
+                HOperatorSet.SelectObj(ho_ClassRegionsNotRejected, out ho_ObjectSelected1,
+                    4);
+
+                ho_RegionOpening1.Dispose();
+                HOperatorSet.OpeningCircle(ho_ObjectSelected1, out ho_RegionOpening1, 3.5);
+
+                ho_RegionFillUp.Dispose();
+                HOperatorSet.FillUp(ho_RegionOpening1, out ho_RegionFillUp);
+
+                //closing_circle (RegionFillUp, RegionClosing, 10)
+
+                ho_ConnectedRegions1.Dispose();
+                HOperatorSet.Connection(ho_RegionFillUp, out ho_ConnectedRegions1);
+                HOperatorSet.CountObj(ho_ConnectedRegions1, out hv_Number);
+
+                //找除靠近中心的圆
+                ho_EmptyObject.Dispose();
+                HOperatorSet.GenEmptyObj(out ho_EmptyObject);
+
+                hv_R = 200;
+                for (hv_Index1 = 1; hv_Index1.Continue(hv_Number, 1); hv_Index1 = hv_Index1.TupleAdd(1))
+                {
+                    ho_ObjectSelected2.Dispose();
+                    HOperatorSet.SelectObj(ho_ConnectedRegions1, out ho_ObjectSelected2, hv_Index1);
+                    HOperatorSet.AreaCenter(ho_ObjectSelected2, out hv_Area3, out hv_Row2, out hv_Column2);
+
+                    if ((int)((new HTuple((new HTuple((new HTuple(hv_Row2.TupleGreater(hv_CircleRow - hv_R))).TupleAnd(
+                        new HTuple(hv_Row2.TupleLess(hv_CircleRow + hv_R))))).TupleAnd(new HTuple(hv_Column2.TupleGreater(
+                        hv_CircleCol - hv_R))))).TupleAnd(new HTuple(hv_Column2.TupleLess(hv_CircleCol + hv_R)))) != 0)
+                    {
+                        ho_RegionDilation.Dispose();
+                        HOperatorSet.DilationCircle(ho_ObjectSelected2, out ho_RegionDilation,
+                            10);
+                        OTemp[SP_O] = ho_EmptyObject.CopyObj(1, -1);
+                        SP_O++;
+                        ho_EmptyObject.Dispose();
+                        HOperatorSet.ConcatObj(ho_RegionDilation, OTemp[SP_O - 1], out ho_EmptyObject
+                            );
+                        OTemp[SP_O - 1].Dispose();
+                        SP_O = 0;
+                    }
+                }
+
+                ho_RegionUnion1.Dispose();
+                HOperatorSet.Union1(ho_EmptyObject, out ho_RegionUnion1);
+
+                ho_ConnectedRegions2.Dispose();
+                HOperatorSet.Connection(ho_RegionUnion1, out ho_ConnectedRegions2);
+
+                ho_SelectedRegions1.Dispose();
+                HOperatorSet.SelectShapeStd(ho_ConnectedRegions2, out ho_SelectedRegions1,
+                    "max_area", 70);
+
+                HOperatorSet.SmallestRectangle2(ho_SelectedRegions1, out hv_Row1, out hv_Column1,
+                    out hv_Phi, out hv_Length1, out hv_Length2);
+                ho_Rectangle.Dispose();
+                HOperatorSet.GenRectangle2(out ho_Rectangle, hv_Row1, hv_Column1, hv_Phi, hv_Length1,
+                    hv_Length2);
+
+
+                HOperatorSet.AreaCenter(ho_RegionFillUp, out hv_Area, out hv_Row, out hv_Column);
+                HOperatorSet.SetDraw(hv_ExpDefaultWinHandle, "margin");
+                HOperatorSet.ClearWindow(hv_ExpDefaultWinHandle);
+
+                HOperatorSet.DispObj(ho_Image, hv_ExpDefaultWinHandle);
+
+
+                if (hv_Length1 > ParaSetting.MinL1 && hv_Length1 < ParaSetting.MaxL1 && hv_Length2 > ParaSetting.MinL2 && hv_Length2 < ParaSetting.MaxL2)
+                {
+                    HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "green");
+                    HOperatorSet.DispObj(ho_Rectangle, hv_ExpDefaultWinHandle);
+                    HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "OK");
+                    if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                    {
+                        HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 1 : 0);
+                    }
+                }
+                else
+                {
+                    HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "red");
+                    HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "NG");
+                    if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                    {
+                        HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 0 : 1);
+                    }
+                }
+
+                HOperatorSet.SetTposition(hv_ExpDefaultWinHandle, 160, 10);
+                HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "green");
+                set_display_font(hv_ExpDefaultWinHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
+                HOperatorSet.WriteString(hv_ExpDefaultWinHandle, $"L1={hv_Length1}, L2={hv_Length2}");
+
+            }
+            catch (HalconException HDevExpDefaultException)
+            {
+                HOperatorSet.SetTposition(hv_ExpDefaultWinHandle, 10, 10);
+                set_display_font(hv_ExpDefaultWinHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
+                HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "red");
+                HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "NG");
+                if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                {
+                    HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 0 : 1);
+                }
+
+                ho_Image.Dispose();
+                ho_Image1.Dispose();
+                ho_Image2.Dispose();
+                ho_Image3.Dispose();
+                ho_ImageResult1.Dispose();
+                ho_ImageResult2.Dispose();
+                ho_ImageResult3.Dispose();
+                ho_ClassRegionsNotRejected.Dispose();
+                ho_ObjectSelected.Dispose();
+                ho_RegionOpening2.Dispose();
+                ho_ConnectedRegions.Dispose();
+                ho_SelectedRegions.Dispose();
+                ho_RegionUnion.Dispose();
+                ho_RegionOpening.Dispose();
+                ho_RegionTrans.Dispose();
+                ho_ImageReduced.Dispose();
+                ho_ObjectSelected1.Dispose();
+                ho_RegionOpening1.Dispose();
+                ho_RegionFillUp.Dispose();
+                ho_ConnectedRegions1.Dispose();
+                ho_EmptyObject.Dispose();
+                ho_ObjectSelected2.Dispose();
+                ho_RegionDilation.Dispose();
+                ho_RegionUnion1.Dispose();
+                ho_ConnectedRegions2.Dispose();
+                ho_SelectedRegions1.Dispose();
+                ho_Rectangle.Dispose();
+
+                throw HDevExpDefaultException;
+            }
+            ho_Image.Dispose();
+            ho_Image1.Dispose();
+            ho_Image2.Dispose();
+            ho_Image3.Dispose();
+            ho_ImageResult1.Dispose();
+            ho_ImageResult2.Dispose();
+            ho_ImageResult3.Dispose();
+            ho_ClassRegionsNotRejected.Dispose();
+            ho_ObjectSelected.Dispose();
+            ho_RegionOpening2.Dispose();
+            ho_ConnectedRegions.Dispose();
+            ho_SelectedRegions.Dispose();
+            ho_RegionUnion.Dispose();
+            ho_RegionOpening.Dispose();
+            ho_RegionTrans.Dispose();
+            ho_ImageReduced.Dispose();
+            ho_ObjectSelected1.Dispose();
+            ho_RegionOpening1.Dispose();
+            ho_RegionFillUp.Dispose();
+            ho_ConnectedRegions1.Dispose();
+            ho_EmptyObject.Dispose();
+            ho_ObjectSelected2.Dispose();
+            ho_RegionDilation.Dispose();
+            ho_RegionUnion1.Dispose();
+            ho_ConnectedRegions2.Dispose();
+            ho_SelectedRegions1.Dispose();
+            ho_Rectangle.Dispose();
+
+        }
     }
 }

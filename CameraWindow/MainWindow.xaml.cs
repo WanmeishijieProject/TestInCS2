@@ -80,5 +80,10 @@ namespace CameraWindow
         {
             (DataContext as MainViewModel).SetResizingFlag(false);
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            (DataContext as MainViewModel).CommandCloseWindow.Execute(null);
+        }
     }
 }
