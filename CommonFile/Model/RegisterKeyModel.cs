@@ -87,6 +87,14 @@ namespace CommonFile.Model
             return TimeSpan.FromTicks(DateTime.Now.Ticks - RegistTimeTicks).TotalDays > TimeLimitArr[(int)TimeLimit];
         }
 
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
 
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

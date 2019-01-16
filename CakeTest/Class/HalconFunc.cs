@@ -551,7 +551,7 @@ namespace CakeTest.Class
                 HOperatorSet.SetTposition(WindowHandle, 160, 10);
                 HOperatorSet.SetColor(WindowHandle, "green");
                 set_display_font(WindowHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
-                HOperatorSet.WriteString(WindowHandle, $"L1={hv_Length1}, L2={hv_Length2}");
+                HOperatorSet.WriteString(WindowHandle, $"L1={hv_Length1.I}, L2={hv_Length2.I}");
 
             }
             catch (HalconException HDevExpDefaultException)
