@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.IO;
 using System.Windows;
+using System.Windows.Interop;
 using CakeTest.UserCtrls;
 using CakeTest.ViewModel;
 
@@ -15,7 +16,7 @@ namespace CakeTest
         /// <summary>
         /// Initializes a new instance of the MainWindow class.
         /// </summary>
-        string _daysLeft;
+        double _daysLeft;
         public MainWindow()
         {
             try
@@ -32,7 +33,7 @@ namespace CakeTest
            
         }
 
-        public string DaysLeft
+        public double DaysLeft
         {
             get { return _daysLeft; }
             set
@@ -57,7 +58,7 @@ namespace CakeTest
 
         private void Register()
         {
-            int Days = 0;
+            double Days = 0;
             if (!Window_Register.CheckFile(out Days))
             {
                 Window_Register RegisterWindow = new Window_Register();
@@ -71,12 +72,61 @@ namespace CakeTest
                 {
                     Days = RegisterWindow.DaysLeft;
                 }
+            }
+            DaysLeft = Days;
+        }
+
+        private void Window_SourceInitialized(object sender, EventArgs e)
+        {
+            HwndSource source = HwndSource.FromVisual(this) as HwndSource;
+
+            if (source != null)
+            {
+                // 注册窗口消息处理函数
+                source.AddHook(new HwndSourceHook(WinProc));
 
             }
-            if (Days > 100)
-                DaysLeft = "已注册";
-            else
-                DaysLeft = $"{Days}天试用期";
         }
+        public const Int32 WM_EXITSIZEMOVE = 0x0232;
+        public const Int32 WM_ENTERSIZEMOVE = 0x0231;
+        public const Int32 WM_SIZE = 0x0005;
+        public const Int32 WM_WINDOWPOSCHANGING = 0x0046;
+        public const Int32 WM_SYSCOMMAND = 0x0112;
+
+        public const Int32 SC_MAXIMIZE = 0xF030;
+        public const Int32 SC_MINIMIZE = 0xF020;
+        public const Int32 SC_STORE = 0xF012;
+        public const Int32 SC_RESTORE = 0xF120;
+
+        private IntPtr WinProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, ref Boolean handled)
+        {
+            IntPtr result = IntPtr.Zero;
+            switch (msg)
+            {
+                case WM_ENTERSIZEMOVE:
+                    (DataContext as MainViewModel).SetResizingFlag(true);
+                    break;
+
+                case WM_EXITSIZEMOVE:
+                    (DataContext as MainViewModel).SetResizingFlag(false);
+                    break;
+
+                case WM_SYSCOMMAND:
+                    if ((int)wParam == SC_MAXIMIZE || (int)wParam == SC_MINIMIZE ||
+                        (int)wParam == SC_RESTORE || (int)wParam == SC_STORE)
+                    {
+                        (DataContext as MainViewModel).SetResizingFlag(true);
+                    }
+                    break;
+
+            }
+            return result;
+        }
+
+        private void Window_StateChanged(object sender, EventArgs e)
+        {
+            (DataContext as MainViewModel).SetResizingFlag(false);
+        }
+
     }
 }

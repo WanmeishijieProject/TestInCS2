@@ -177,6 +177,7 @@
     <Compile Include="Config\CamConfig.cs" />
     <Compile Include="Config\CameraConfigManager.cs" />
     <Compile Include="Config\ParaSettingManager\SettingParaManager.cs" />
+    <Compile Include="Converters\Double2Text.cs" />
     <Compile Include="Converters\Int2BackgroundBrush.cs" />
     <Compile Include="Converters\int2Visibility.cs" />
     <Compile Include="Converters\MsgType2ForeBrush.cs" />
@@ -185,6 +186,7 @@
     <Compile Include="Model\CameraInfoModel.cs" />
     <Compile Include="Model\MessageItem.cs" />
     <Compile Include="Model\ParaModel.cs" />
+    <Compile Include="Model\VisionSyncData.cs" />
     <Compile Include="UserCtrls\UC_ErrorInfo.xaml.cs">
       <DependentUpon>UC_ErrorInfo.xaml</DependentUpon>
     </Compile>

@@ -318,5 +318,17 @@ namespace CakeTest.ViewModel
         }
         #endregion
 
+        #region Method
+        public void SetResizingFlag(bool IsSizing = true)
+        {
+            lock (VisionCommonFunc.SyncData.VisionLock)
+            {
+                VisionCommonFunc.SyncData.IsNewSizing = IsSizing;
+                Console.WriteLine(IsSizing ? "Sizing" : "Done");
+                if (IsSizing)
+                    VisionCommonFunc.SyncData.IsOldSizing = IsSizing;
+            }
+        }
+        #endregion
     }
 }

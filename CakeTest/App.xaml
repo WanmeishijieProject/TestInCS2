@@ -20,6 +20,7 @@
             <Convert:MsgType2ForeBrush x:Key="MsgType2ForeBrush"/>
             <Convert:MsgType2Image x:Key="MsgType2Image"/>
             <Convert:int2Visibility x:Key="int2Visibility"/>
+            <Convert:Double2Text x:Key="Double2Text"/>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resource/MDStyle.xaml"/>
                 <ResourceDictionary Source="Resource/StylesResourceDictionary.xaml"/>

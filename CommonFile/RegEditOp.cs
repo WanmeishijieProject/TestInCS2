@@ -14,16 +14,16 @@ namespace CommonFile
             
             if (IsRegistryKeyExist("smx"))
             {
-                RegistryKey hklm = Registry.LocalMachine;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"SOFTWARE", true);
+                RegistryKey hklm = Registry.CurrentUser;
+                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
                 hkSoftWare.SetValue("smx", KeyValue, RegistryValueKind.String);
                 hklm.Close();
                 hkSoftWare.Close();
             }
             else
             {
-                RegistryKey hklm = Registry.LocalMachine;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"SOFTWARE", true);
+                RegistryKey hklm = Registry.CurrentUser;
+                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
                 hkSoftWare.CreateSubKey("smx");
                 hklm.SetValue("smx", KeyValue, RegistryValueKind.String);
                 hklm.Close();
@@ -35,8 +35,8 @@ namespace CommonFile
         {
             if (IsRegistryKeyExist("smx"))
             {
-                RegistryKey hklm = Registry.LocalMachine;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"SOFTWARE", true);
+                RegistryKey hklm = Registry.CurrentUser;
+                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
                 var str = hkSoftWare.GetValue("smx");
                 hklm.Close();
                 hkSoftWare.Close();
@@ -49,8 +49,8 @@ namespace CommonFile
         public bool IsRegistryKeyExist(string sKeyName)
         {
             string[] sKeyNameColl;
-            RegistryKey hklm = Registry.LocalMachine;
-            RegistryKey hkSoftWare = hklm.OpenSubKey(@"SOFTWARE", true);
+            RegistryKey hklm = Registry.CurrentUser;
+            RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
             sKeyNameColl = hkSoftWare.GetSubKeyNames(); //获取SOFTWARE下所有的子项
             foreach (string sName in sKeyNameColl)
             {
@@ -66,5 +66,41 @@ namespace CommonFile
             return false;
         }
 
+
+        public void WriteRemainTime(string KeyValue)
+        {
+            if (IsRegistryKeyExist("smx_Remain"))
+            {
+                RegistryKey hklm = Registry.CurrentUser;
+                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
+                hkSoftWare.SetValue("smx_Remain", KeyValue, RegistryValueKind.String);
+                hklm.Close();
+                hkSoftWare.Close();
+            }
+            else
+            {
+                RegistryKey hklm = Registry.CurrentUser;
+                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
+                hkSoftWare.CreateSubKey("smx_Remain");
+                hklm.SetValue("smx_Remain", KeyValue, RegistryValueKind.String);
+                hklm.Close();
+                hkSoftWare.Close();
+            }
+        }
+
+        public string ReadUsedTime()
+        {
+            if (IsRegistryKeyExist("smx_Remain"))
+            {
+                RegistryKey hklm = Registry.CurrentUser;
+                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
+                var str = hkSoftWare.GetValue("smx_Remain");
+                hklm.Close();
+                hkSoftWare.Close();
+                if (str != null)
+                    return str.ToString();
+            }
+            return "";
+        }
     }
 }

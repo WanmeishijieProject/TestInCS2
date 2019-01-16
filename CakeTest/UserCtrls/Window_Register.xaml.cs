@@ -71,7 +71,7 @@ namespace CakeTest.UserCtrls
         {
             try
             {
-                IsCheckSuccess = software.CheckPswd(RegisterKey);
+                IsCheckSuccess = software.CheckRegisterKey(RegisterKey);
                 MessageBox.Show("注册成功");
                 Close();
             }
@@ -86,13 +86,16 @@ namespace CakeTest.UserCtrls
             Close();
         }
 
-        public static bool CheckFile(out int DaysLeft)
+        public static bool CheckFile(out double DaysLeft)
         {
         
             var Ret= software.CheckFile(out DaysLeft);
             return Ret;
         }
 
-        public int DaysLeft { get { return software.DaysLeft; } private set { } }
+        public double DaysLeft { get { return Math.Round(software.DaysLeft,2); } private set { } }
+
+
+
     }
 }

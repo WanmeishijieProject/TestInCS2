@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using CakeTest.Model;
 using HalconDotNet;
@@ -16,6 +17,8 @@ namespace CakeTest.Class
         private HObject ho_Image,ho_image_Copy;
         HTuple hv_MLPHandle, hv_MLPHandle1;
         ParaModel ParaSetting;
+        public VisionSyncData SyncData = new VisionSyncData();
+
         private void dev_open_window_fit_image(HObject ho_Image, HTuple hv_Row, HTuple hv_Column,
         
         HTuple hv_WidthLimit, HTuple hv_HeightLimit, out HTuple hv_WindowHandle)
@@ -710,11 +713,11 @@ namespace CakeTest.Class
                 ho_Image.Dispose();
                 //HOperatorSet.ReadImage(out ho_Image, new HTuple(new HTuple("C:/Code/Halcon/检测有无/图片1/") + 13) + ".bmp");
                 HOperatorSet.GrabImage(out ho_Image, hv_AcqHandle);
-                HOperatorSet.DispObj(ho_Image, hv_ExpDefaultWinHandle);
+                //HOperatorSet.DispObj(ho_Image, hv_ExpDefaultWinHandle);
 
                 ho_image_Copy = ho_Image.SelectObj(1);
                 HOperatorSet.GetImageSize(ho_Image, out HTuple width, out HTuple height);
-                HOperatorSet.SetPart(hv_ExpDefaultWinHandle, 0, 0, height, width);
+               
 
                 HOperatorSet.ReadClassMlp("mlp_1.gmc", out hv_MLPHandle);
                 HOperatorSet.ReadClassMlp("mlp_3.gmc", out hv_MLPHandle1);
@@ -843,41 +846,65 @@ namespace CakeTest.Class
                 HOperatorSet.SetDraw(hv_ExpDefaultWinHandle, "margin");
                 HOperatorSet.ClearWindow(hv_ExpDefaultWinHandle);
 
-                HOperatorSet.DispObj(ho_Image, hv_ExpDefaultWinHandle);
 
-
-                if (hv_Length1 > ParaSetting.MinL1 && hv_Length1 < ParaSetting.MaxL1 && hv_Length2 > ParaSetting.MinL2 && hv_Length2 < ParaSetting.MaxL2)
+                lock (SyncData.VisionLock)
                 {
-                    HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "green");
-                    HOperatorSet.DispObj(ho_Rectangle, hv_ExpDefaultWinHandle);
-                    HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "OK");
-                    if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                    if (SyncData.IsNewSizing == false)
                     {
-                        HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 1 : 0);
+                        if (SyncData.IsNewSizing != SyncData.IsOldSizing)
+                        {
+                            Thread.Sleep(300);
+                            SyncData.IsOldSizing = SyncData.IsNewSizing;
+                            Console.WriteLine("Trig");
+                        }
+                        HOperatorSet.SetPart(hv_ExpDefaultWinHandle, 0, 0, height, width);
+                        HOperatorSet.DispObj(ho_Image, hv_ExpDefaultWinHandle);
+
+                        if (hv_Length1 > ParaSetting.MinL1 && hv_Length1 < ParaSetting.MaxL1 && hv_Length2 > ParaSetting.MinL2 && hv_Length2 < ParaSetting.MaxL2)
+                        {
+                            HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "green");
+                            HOperatorSet.DispObj(ho_Rectangle, hv_ExpDefaultWinHandle);
+                            HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "OK");
+                            if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                            {
+                                HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 1 : 0);
+                            }
+                        }
+                        else
+                        {
+                            HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "red");
+                            HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "NG");
+                            if (ParaSetting.UseOutput == EnumUseOutput.Use)
+                            {
+                                HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 0 : 1);
+                            }
+                        }
+
+                        HOperatorSet.SetTposition(hv_ExpDefaultWinHandle, 160, 10);
+                        HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "green");
+                        set_display_font(hv_ExpDefaultWinHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
+                        HOperatorSet.WriteString(hv_ExpDefaultWinHandle, $"L1={hv_Length1}, L2={hv_Length2}");
                     }
                 }
-                else
-                {
-                    HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "red");
-                    HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "NG");
-                    if (ParaSetting.UseOutput == EnumUseOutput.Use)
-                    {
-                        HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 0 : 1);
-                    }
-                }
-
-                HOperatorSet.SetTposition(hv_ExpDefaultWinHandle, 160, 10);
-                HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "green");
-                set_display_font(hv_ExpDefaultWinHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
-                HOperatorSet.WriteString(hv_ExpDefaultWinHandle, $"L1={hv_Length1}, L2={hv_Length2}");
-
             }
             catch (HalconException HDevExpDefaultException)
             {
-                HOperatorSet.SetTposition(hv_ExpDefaultWinHandle, 10, 10);
-                set_display_font(hv_ExpDefaultWinHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
-                HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "red");
-                HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "NG");
+                lock (SyncData.VisionLock)
+                {
+                    if (SyncData.IsNewSizing == false)
+                    {
+                        if (SyncData.IsNewSizing != SyncData.IsOldSizing)
+                        {
+                            Thread.Sleep(300);
+                            SyncData.IsOldSizing = SyncData.IsNewSizing;
+                            Console.WriteLine("Trig");
+                        }
+                        HOperatorSet.SetTposition(hv_ExpDefaultWinHandle, 10, 10);
+                        set_display_font(hv_ExpDefaultWinHandle, (int)(ParaSetting.FontSize), "mono", "true", "false");
+                        HOperatorSet.SetColor(hv_ExpDefaultWinHandle, "red");
+                        HOperatorSet.WriteString(hv_ExpDefaultWinHandle, "NG");
+                    }
+                }
                 if (ParaSetting.UseOutput == EnumUseOutput.Use)
                 {
                     HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "UserOutputValue", ParaSetting.OutputLogicNG == EnumOutputLogic.False ? 0 : 1);

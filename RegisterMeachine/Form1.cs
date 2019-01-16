@@ -33,7 +33,7 @@ namespace RegisterMeachine
         private void button1_Click(object sender, EventArgs e)
         {
             Enum.TryParse(comboBox1.Text, out EnumTimeOut TimeOut);
-            var Pswd=Tool.GenPswd(textBox1.Text, TimeOut);
+            var Pswd=Tool.GenRegisterKey(textBox1.Text, TimeOut);
             textBox2.Text = Pswd;
         }
     }
