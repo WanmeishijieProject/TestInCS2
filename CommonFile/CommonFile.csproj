@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CommonSoftware.cs" />
+    <Compile Include="Model\MachineNumberModel.cs" />
     <Compile Include="Model\RegisterKeyModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegEditOp.cs" />

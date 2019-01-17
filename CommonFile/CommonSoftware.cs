@@ -69,7 +69,12 @@ namespace CommonFile
 
         public string GetMachineKey()
         {
-            return info.GetMNum();
+            MachineNumberModel Model = new MachineNumberModel
+            {
+                HardwareID = info.GetMNum(),
+            };
+            return Model.ToString();
+   
         }
 
         /// <summary>
@@ -80,11 +85,13 @@ namespace CommonFile
         /// <returns></returns>
         public string GenRegisterKey(string MachineKey,EnumTimeOut Timeout)
         {
+            var ClientMachineKey=MachineNumberModel.FromString(MachineKey);
             var registerKeyModel = new RegisterKeyModel()
-            { 
-                RegisterKey= info.GetRNum(),
-                TimeLimit= Timeout,
-                RegistTimeTicks=DateTime.Now.Ticks,
+            {
+                RegisterKey = info.GetRNum(),
+                TimeLimit = Timeout,
+                RegistTimeTicks = DateTime.Now.Ticks,
+                Timestamp5 = ClientMachineKey.Timestamp5,
             };
             return registerKeyModel.ToString();
         }
@@ -94,28 +101,25 @@ namespace CommonFile
         /// </summary>
         /// <param name="RegisterKey"></param>
         /// <returns></returns>
-        public bool CheckRegisterKey(string RegisterKey)
+        public bool CheckRegisterKey(string MachineKey, string RegisterKey)
         {
-            try
+            var MachineModelIn = MachineNumberModel.FromString(MachineKey);
+            var ModelIn = RegisterKeyModel.FromString(RegisterKey);
+            if (ModelIn.Timestamp5 != MachineModelIn.Timestamp5)
+                throw new Exception("已经过时的注册码");
+
+            if (ModelIn.RegisterKey == info.GetRNum())
             {
-                var ModelIn = RegisterKeyModel.FromString(RegisterKey);
-                if (ModelIn.RegisterKey == info.GetRNum())
+                using (var s = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
                 {
-                    using (var s = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
-                    {
-                        var bf = new BinaryFormatter();
-                        bf.Serialize(s, ModelIn);
-                        RegEditor.WriteRegisterValue(RegisterKey);
-                        RegEditor.WriteRemainTime("0");
-                        DaysLeft= TimeArr[(int)ModelIn.TimeLimit];
-                    }
+                    var bf = new BinaryFormatter();
+                    bf.Serialize(s, ModelIn);
+                    RegEditor.WriteRegisterValue(RegisterKey);
+                    RegEditor.WriteRemainTime("0");
+                    DaysLeft= TimeArr[(int)ModelIn.TimeLimit];
                 }
-                return true;
             }
-            catch
-            {
-                return false;
-            }
+            return true;  
             #region 废弃
             ////去掉后面的随机数     
             //EnumTimeOut TimeOutType = EnumTimeOut.TwoDay;

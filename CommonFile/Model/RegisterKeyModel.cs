@@ -12,6 +12,7 @@ namespace CommonFile.Model
     {
         double[] TimeLimitArr = { 2, 7, 15, 30, 9999 };
         public string RegisterKey { get; set; }
+        public string Timestamp5 { get; set; }
         public string RandomKey
         {
             get
@@ -33,7 +34,7 @@ namespace CommonFile.Model
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(RegisterKey);
-            sb.Append(RandomKey);
+            sb.Append(RandomKey.Substring(0,5)+ Timestamp5);
             sb.Append(((int)TimeLimit).ToString());
             sb.Append(string.Format("{0:D20}", RegistTimeTicks));
             return sb.ToString();
@@ -41,15 +42,17 @@ namespace CommonFile.Model
 
         public static RegisterKeyModel FromString(string strRegisterKey)
         {
+            var len = strRegisterKey.Length;
             var Model = new RegisterKeyModel();
             if (string.IsNullOrEmpty(strRegisterKey))
                 throw new Exception("注册码不能为空");
             if (strRegisterKey.Length <= (Model.RandomKey.Length + 21))
                 throw new Exception("错误的注册码");
-            string timeRegister = strRegisterKey.Substring(strRegisterKey.Length - 20,20);
-            string timelimit = strRegisterKey.Substring(strRegisterKey.Length-21, 1);
-            string randomStr = strRegisterKey.Substring(strRegisterKey.Length- Model.RandomKey.Length-21, Model.RandomKey.Length);
-            string registerKey = strRegisterKey.Substring(0, strRegisterKey.Length - 21 - Model.RandomKey.Length);
+            string timeRegister = strRegisterKey.Substring(len - 20,20);
+            string timelimit = strRegisterKey.Substring(len - 21, 1);
+            string randomStr = strRegisterKey.Substring(len - Model.RandomKey.Length-21, Model.RandomKey.Length);
+            string timeTamp = randomStr.Substring(5, 5);
+            string registerKey = strRegisterKey.Substring(0, len - 21 - Model.RandomKey.Length);
             if (Enum.TryParse<EnumTimeOut>(timelimit, out EnumTimeOut timeout))
             {
                 if (long.TryParse(timeRegister, out long timeStart))

@@ -71,12 +71,13 @@ namespace CakeTest.UserCtrls
         {
             try
             {
-                IsCheckSuccess = software.CheckRegisterKey(RegisterKey);
+                IsCheckSuccess = software.CheckRegisterKey(MachineNum,RegisterKey);
                 MessageBox.Show("注册成功");
                 Close();
             }
             catch
             {
+                MessageBox.Show("注册失败");
                 IsCheckSuccess = false;
             }
         }

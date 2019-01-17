@@ -145,6 +145,10 @@
       <Project>{46d1bc17-348c-4e00-b145-4dfd687918ff}</Project>
       <Name>VisionLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ResizableWIndow\ResizableWIndow.csproj">
+      <Project>{e3944255-4278-4321-822f-6b7f1901bb3b}</Project>
+      <Name>ResizableWIndow</Name>
+    </ProjectReference>
     <ProjectReference Include="..\VisionDemoLib\VisionDemoLib.csproj">
       <Project>{bf077bf2-6624-4e59-b487-6940f58d91ae}</Project>
       <Name>VisionDemoLib</Name>

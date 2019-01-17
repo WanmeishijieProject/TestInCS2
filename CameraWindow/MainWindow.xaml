@@ -1,9 +1,10 @@
-﻿<Window x:Class="CameraWindow.MainWindow"
+﻿<ResizeWindow:CanResizableVisionWindowWpf x:Class="CameraWindow.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:UserCtrls="clr-namespace:CameraWindow.UserCtrls"
+        xmlns:ResizeWindow="clr-namespace:ResizableWIndow;assembly=ResizableWIndow"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         mc:Ignorable="d ignore"
         Height="600"
@@ -12,19 +13,17 @@
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
-        SourceInitialized="Window_SourceInitialized" 
         WindowState="Maximized" 
         WindowStartupLocation="CenterScreen"
-        StateChanged="Window_StateChanged"
         >
-    <Window.Resources>
+    <ResizeWindow:CanResizableVisionWindowWpf.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Window.Resources>
-    <Window.InputBindings>
+    </ResizeWindow:CanResizableVisionWindowWpf.Resources>
+    <ResizeWindow:CanResizableVisionWindowWpf.InputBindings>
         <KeyBinding Gesture="Control+1" 
               Command="{Binding CommandMaxCamera}" CommandParameter="1"/>
         <KeyBinding Gesture="Control+2"  
@@ -35,7 +34,7 @@
               Command="{Binding CommandMaxCamera}" CommandParameter="4"/>
         <KeyBinding Gesture="Control+Q"  
               Command="{Binding CommandResumeCamera}"/>
-    </Window.InputBindings>
+    </ResizeWindow:CanResizableVisionWindowWpf.InputBindings>
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -86,4 +85,4 @@
         </Grid>
        
     </Grid>
-</Window>
+</ResizeWindow:CanResizableVisionWindowWpf>
