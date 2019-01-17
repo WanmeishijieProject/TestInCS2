@@ -95,7 +95,5 @@ namespace CakeTest.UserCtrls
 
         public double DaysLeft { get { return Math.Round(software.DaysLeft,2); } private set { } }
 
-
-
     }
 }

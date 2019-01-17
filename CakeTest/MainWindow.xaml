@@ -1,8 +1,9 @@
-﻿<Window x:Class="CakeTest.MainWindow"
+﻿<CanResizeWindow:CanResizableVisionWindowWpf x:Class="CakeTest.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:CanResizeWindow="clr-namespace:ResizableWIndow;assembly=ResizableWIndow"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         xmlns:UserCtrls="clr-namespace:CakeTest.UserCtrls"
         xmlns:dxb="http://schemas.devexpress.com/winfx/2008/xaml/bars"
@@ -12,16 +13,15 @@
         Height="600"
         Width="800"
         Title="CakeTest"
-        SourceInitialized="Window_SourceInitialized"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
-   
-    <Window.Resources>
+
+    <CanResizeWindow:CanResizableVisionWindowWpf.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </Window.Resources>
+    </CanResizeWindow:CanResizableVisionWindowWpf.Resources>
 
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
@@ -109,4 +109,4 @@
             </materialDesign:Badged>
         </Grid>
     </Grid>
-</Window>
+</CanResizeWindow:CanResizableVisionWindowWpf>

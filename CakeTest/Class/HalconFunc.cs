@@ -340,9 +340,9 @@ namespace CakeTest.Class
         public void OpenCamera(HTuple CamName)
         {
             HOperatorSet.OpenFramegrabber("GigEVision", 0, 0, 0, 0, 0, 0, "progressive",
-                        -1, "default", -1, "false", "default", "CamCake", 0, -1, out hv_AcqHandle);
+                        -1, "default", -1, "false", "default", CamName, 0, -1, out hv_AcqHandle);
             HOperatorSet.ReadClassMlp("mlp_1.gmc", out hv_MLPHandle);
-            HOperatorSet.ReadClassMlp("mlp_2.gmc", out hv_MLPHandle1);
+            HOperatorSet.ReadClassMlp("mlp_3.gmc", out hv_MLPHandle1);
 
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "TriggerSelector", "FrameStart");
             HOperatorSet.SetFramegrabberParam(hv_AcqHandle, "grab_timeout", 400000);
@@ -672,8 +672,8 @@ namespace CakeTest.Class
 
             // Local control variables 
 
-            HTuple hv_WindowHandle = new HTuple(), hv_MLPHandle;
-            HTuple hv_MLPHandle1, hv_Area2, hv_CircleRow, hv_CircleCol;
+            HTuple hv_WindowHandle = new HTuple();
+            HTuple  hv_Area2, hv_CircleRow, hv_CircleCol;
             HTuple hv_Number, hv_R, hv_Index1, hv_Area3 = new HTuple();
             HTuple hv_Row2 = new HTuple(), hv_Column2 = new HTuple(), hv_Row1;
             HTuple hv_Column1, hv_Phi, hv_Length1, hv_Length2, hv_Area;
@@ -719,8 +719,8 @@ namespace CakeTest.Class
                 HOperatorSet.GetImageSize(ho_Image, out HTuple width, out HTuple height);
                
 
-                HOperatorSet.ReadClassMlp("mlp_1.gmc", out hv_MLPHandle);
-                HOperatorSet.ReadClassMlp("mlp_3.gmc", out hv_MLPHandle1);
+                //HOperatorSet.ReadClassMlp("mlp_1.gmc", out hv_MLPHandle);
+                //HOperatorSet.ReadClassMlp("mlp_3.gmc", out hv_MLPHandle1);
 
 
 

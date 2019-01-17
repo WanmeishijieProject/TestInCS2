@@ -19,7 +19,6 @@ namespace CameraWindow
         {
             InitializeComponent();
             Closing += (s, e) => ViewModelLocator.Cleanup();
-            //Vision.SetVisionSync(ref mr);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -37,7 +36,6 @@ namespace CameraWindow
             {
                 // 注册窗口消息处理函数
                 source.AddHook(new HwndSourceHook(WinProc));
-
             }
         }
         public const Int32 WM_EXITSIZEMOVE = 0x0232;

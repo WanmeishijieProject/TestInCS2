@@ -269,6 +269,10 @@
       <Project>{19920575-db5e-4476-b378-9acdf6d4b078}</Project>
       <Name>CommonFile</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ResizableWIndow\ResizableWIndow.csproj">
+      <Project>{e3944255-4278-4321-822f-6b7f1901bb3b}</Project>
+      <Name>ResizableWIndow</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\AppIcon.png" />
