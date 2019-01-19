@@ -25,11 +25,17 @@ namespace CommonFile.Model
 
         }
         public string HardwareID { get; set; }
+
+        /// <summary>
+        /// 生成机器码的当前时间
+        /// </summary>
         public long Timestamp20
         {
             get;
             private set;
         }
+
+
         private string RandomKey10
         {
             get;
@@ -47,8 +53,8 @@ namespace CommonFile.Model
             StringBuilder sb = new StringBuilder();
             sb.Append(HardwareID);
             var strTimestamp20 = String.Format("{0:D20}", Timestamp20);
-            sb.Append(strTimestamp20);
-            sb.Append(RandomKey10);
+            sb.Append(strTimestamp20);      //20
+            sb.Append(RandomKey10);         //10
             return sb.ToString();
         }
 

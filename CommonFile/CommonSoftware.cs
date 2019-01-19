@@ -61,7 +61,8 @@ namespace CommonFile
 #if REG
             if (DateTime.Now.Ticks - TimeStart > 0)
             {
-                TimeTicksUsed += DateTime.Now.Ticks - TimeStart;
+                var NowTicks = DateTime.Now.Ticks;
+                TimeTicksUsed += (NowTicks - TimeStart);
                 RegEditor.WriteRemainTime(TimeTicksUsed.ToString());
             }
 #endif
@@ -90,8 +91,9 @@ namespace CommonFile
             {
                 RegisterKey = info.GetRNum(),
                 TimeLimit = Timeout,
-                Timestamp5= ClientMachineKey.Timestamp5, 
-                
+                Timestamp5 = ClientMachineKey.Timestamp5,
+                RegistTimeTicks = ClientMachineKey.Timestamp20,
+
             };
             return registerKeyModel.ToString();
         }

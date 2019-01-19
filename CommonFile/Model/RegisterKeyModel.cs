@@ -41,18 +41,20 @@ namespace CommonFile.Model
 
         public EnumTimeOut TimeLimit { get; set; }
 
-        //生成注册码的时间
-        public long RegistTimeTicks { get; private set; }
+        /// <summary>
+        /// 要与生成机器码的时间保持一致
+        /// </summary>
+        public long RegistTimeTicks { get; set; }
 
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            sb.Append(RegisterKey);
+            sb.Append(RegisterKey);     //x
             RandomKey = RandomKey.Substring(0, 5) + Timestamp5;
-            sb.Append(RandomKey);
-            sb.Append(((int)TimeLimit).ToString());
-            sb.Append(string.Format("{0:D20}", RegistTimeTicks));
+            sb.Append(RandomKey);                               //10
+            sb.Append(((int)TimeLimit).ToString());             //1
+            sb.Append(string.Format("{0:D20}", RegistTimeTicks));//20
             return sb.ToString();
         }
 

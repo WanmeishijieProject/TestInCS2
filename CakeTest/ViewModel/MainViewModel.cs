@@ -270,7 +270,6 @@ namespace CakeTest.ViewModel
                 try
                 {
                     SystemState = EnumSystemState.Running;
-                    Task.Delay(20000).Wait();
                     VisionCommonFunc.Action(WindowHandle);
                 }
                 catch (Exception ex)
