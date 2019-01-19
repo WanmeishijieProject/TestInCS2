@@ -8,32 +8,46 @@ namespace CommonFile.Model
 {
     public class MachineNumberModel
     {
+        public MachineNumberModel()
+        {
+            Timestamp20 = DateTime.Now.Ticks;
+            var strTimestamp20 = String.Format("{0:D20}", Timestamp20);
+            Timestamp5= strTimestamp20.Substring(15, 5);
+
+            //
+            Random r = new Random();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 10; i++)
+            {
+                sb.Append(r.Next(0, 9).ToString());
+            }
+            RandomKey10 = sb.ToString();
+
+        }
         public string HardwareID { get; set; }
         public long Timestamp20
         {
-            get { return DateTime.Now.Ticks; }
+            get;
+            private set;
         }
         private string RandomKey10
         {
-            get
-            {
-                Random r = new Random();
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < 10; i++)
-                {
-                    sb.Append(r.Next(0, 9).ToString());
-                }
-                return sb.ToString();
-            }
+            get;
+            set;
         }
 
-        public string Timestamp5 { get; private set; }
+        public string Timestamp5 {
+            get;
+            private set;
+        }
+
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(HardwareID);
-            var strTimestamp = String.Format("{0:D20}", Timestamp20);
-            sb.Append(strTimestamp);
+            var strTimestamp20 = String.Format("{0:D20}", Timestamp20);
+            sb.Append(strTimestamp20);
             sb.Append(RandomKey10);
             return sb.ToString();
         }
@@ -53,6 +67,8 @@ namespace CommonFile.Model
             {
                 HardwareID = hardwareID,
                 Timestamp5 = timestamp20.Substring(15, 5),
+                RandomKey10= randomKey10,
+                Timestamp20= nTimestamp20,
             };
         }
     }

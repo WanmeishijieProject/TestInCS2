@@ -165,6 +165,15 @@ namespace CakeTest.ViewModel
                 return new RelayCommand(() => ShowSnakeInfoBar = false);
             }
         }
+        public RelayCommand CommandClosingWindow
+        {
+            get
+            {
+                return new RelayCommand(() => {
+                    StopStationCommand.Execute(null);
+                });
+            }
+        }
         public RelayCommand ClearMessageCommand
         {
             get
@@ -195,7 +204,12 @@ namespace CakeTest.ViewModel
             get
             {
                 return new RelayCommand(() => {
-                    cts.Cancel();
+                    if (cts != null)
+                        cts.Cancel();
+                    if (t != null)
+                    {
+                        t.Wait(1000);
+                    }
                 });
             }
         }
@@ -248,7 +262,7 @@ namespace CakeTest.ViewModel
         #endregion
 
 
-        #region Private method
+        #region  method
         private int ThreadFunc(object o)
         {
             while (!cts.IsCancellationRequested)
@@ -256,29 +270,31 @@ namespace CakeTest.ViewModel
                 try
                 {
                     SystemState = EnumSystemState.Running;
-                    //VisionCommonFunc.TestCake(WindowHandle);
+                    Task.Delay(20000).Wait();
                     VisionCommonFunc.Action(WindowHandle);
                 }
                 catch (Exception ex)
                 {
-                    ShowErrorinfo($"运行中出现错误,程序中止运行:{ex.Message}");
+                    ShowErrorinfo($"运行中出现错误:{ex.Message}");
                 }
             }
+            
             SystemState = EnumSystemState.Idle;
             return 0;
         }
 
+        delegate void MyDel();
         private void ShowErrorinfo(string ErrorMsg)
         {
-            Application.Current.Dispatcher.Invoke(()=> {
-                if (!string.IsNullOrEmpty(ErrorMsg) && LastError!=ErrorMsg)
+            Application.Current.Dispatcher.BeginInvoke(new MyDel(()=> {
+                if (!string.IsNullOrEmpty(ErrorMsg) && LastError != ErrorMsg)
                 {
                     LastError = ErrorMsg;
                     SnakeLastError = $"{DateTime.Now.GetDateTimeFormats()[35]}: {ErrorMsg}";
                     ShowSnakeInfoBar = true;
                     SystemErrorMessageCollection.Add(new MessageItem() { MsgType = EnumMessageType.Error, StrMsg = SnakeLastError });
                 }
-            });        
+            }),null);
         }
 
         private void SystemErrorMessageCollection_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -316,9 +332,9 @@ namespace CakeTest.ViewModel
                 MessageBox.Show(ex.Message);
             }
         }
-        #endregion
+    
 
-        #region Method
+
         public void SetResizingFlag(bool IsSizing = true)
         {
             lock (VisionCommonFunc.SyncData.VisionLock)

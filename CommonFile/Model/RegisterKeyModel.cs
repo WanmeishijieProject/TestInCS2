@@ -10,31 +10,47 @@ namespace CommonFile.Model
     [Serializable]
     public class RegisterKeyModel
     {
+        public RegisterKeyModel()
+        {
+            Random r = new Random();
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < 10; i++)
+            {
+                sb.Append(r.Next(0, 9).ToString());
+            }
+            RandomKey= sb.ToString();
+
+            RegistTimeTicks = DateTime.Now.Ticks;
+        }
+
         double[] TimeLimitArr = { 2, 7, 15, 30, 9999 };
         public string RegisterKey { get; set; }
-        public string Timestamp5 { get; set; }
-        public string RandomKey
+
+        //与机器码一致的时间戳
+        public string Timestamp5
         {
-            get
-            {
-                Random r = new Random();
-                StringBuilder sb = new StringBuilder();
-                for (int i = 0; i < 10; i++)
-                {
-                    sb.Append(r.Next(0,9).ToString());
-                }
-                return sb.ToString();
-            }
+            get;
+            set;
         }
+
+        private string RandomKey
+        {
+            get;
+            set;
+        }
+
         public EnumTimeOut TimeLimit { get; set; }
-        public long RegistTimeTicks { get; set; }
+
+        //生成注册码的时间
+        public long RegistTimeTicks { get; private set; }
 
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(RegisterKey);
-            sb.Append(RandomKey.Substring(0,5)+ Timestamp5);
+            RandomKey = RandomKey.Substring(0, 5) + Timestamp5;
+            sb.Append(RandomKey);
             sb.Append(((int)TimeLimit).ToString());
             sb.Append(string.Format("{0:D20}", RegistTimeTicks));
             return sb.ToString();
@@ -60,6 +76,8 @@ namespace CommonFile.Model
                     Model.TimeLimit = timeout;
                     Model.RegisterKey = registerKey;
                     Model.RegistTimeTicks = timeStart;
+                    Model.RandomKey = randomStr;
+                    Model.Timestamp5 = timeTamp;
                 }
                 else
                 {
@@ -78,15 +96,19 @@ namespace CommonFile.Model
             return  m1.RandomKey == m2.RandomKey &&
                     m1.RegisterKey == m2.RegisterKey &&
                     m1.RegistTimeTicks == m2.RegistTimeTicks &&
-                    m1.TimeLimit == m2.TimeLimit;
+                    m1.TimeLimit == m2.TimeLimit &&
+                    m1.Timestamp5 == m2.Timestamp5;
+                    
         }
         public static bool operator !=(RegisterKeyModel m1, RegisterKeyModel m2)
         {
             return !(m1 == m2);
         }
 
-        public bool IsTimeoutFromNow()
+        public bool IsTimeoutFromNow(out double DaysLeftFromRegister)
         {
+            var dayLeft = TimeLimitArr[(int)TimeLimit] - TimeSpan.FromTicks(DateTime.Now.Ticks - RegistTimeTicks).TotalDays;
+            DaysLeftFromRegister = dayLeft <= 0 ? 0 : dayLeft;
             return TimeSpan.FromTicks(DateTime.Now.Ticks - RegistTimeTicks).TotalDays > TimeLimitArr[(int)TimeLimit];
         }
 

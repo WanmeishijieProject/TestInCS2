@@ -90,8 +90,8 @@ namespace CommonFile
             {
                 RegisterKey = info.GetRNum(),
                 TimeLimit = Timeout,
-                RegistTimeTicks = DateTime.Now.Ticks,
-                Timestamp5 = ClientMachineKey.Timestamp5,
+                Timestamp5= ClientMachineKey.Timestamp5, 
+                
             };
             return registerKeyModel.ToString();
         }
@@ -153,7 +153,6 @@ namespace CommonFile
 
         public bool CheckFile(out double DaysLeft)
         {
-
             DaysLeft = 0;
             if (File.Exists(FilePath) && RegEditor.IsRegistryKeyExist("smx"))
             {
@@ -164,12 +163,19 @@ namespace CommonFile
                     var ModelInReg =RegisterKeyModel.FromString(RegEditor.ReadRegisterValue());
                     if (ModelInFile == ModelInReg)
                     {
-                        if (!ModelInFile.IsTimeoutFromNow())
+                        //总时间-(读取Now-注册时间)
+                        if (!ModelInFile.IsTimeoutFromNow(out double DaysLeft1))
                         {
                             long ticks = long.Parse(RegEditor.ReadUsedTime());
                             if (TimeSpan.FromTicks(ticks).TotalDays <= TimeArr[(int)ModelInFile.TimeLimit] )
                             {
-                                DaysLeft = TimeArr[(int)ModelInFile.TimeLimit]-TimeSpan.FromTicks(ticks).TotalDays;
+                                //这个时间是剩余的使用时间
+                                var DaysLeft2 = TimeArr[(int)ModelInFile.TimeLimit]-TimeSpan.FromTicks(ticks).TotalDays;
+                                DaysLeft = Math.Min(DaysLeft1,DaysLeft2);
+
+                                //按照最大的使用时间计算已经使用的Ticks
+                                TimeTicksUsed = TimeSpan.FromDays(TimeArr[(int)ModelInFile.TimeLimit]- DaysLeft).Ticks;
+                                RegEditor.WriteRemainTime(TimeTicksUsed.ToString());
                                 return true;
                             }
                         }

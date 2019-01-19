@@ -13,6 +13,7 @@
         Height="600"
         Width="800"
         Title="CakeTest"
+        Closing="CanResizableVisionWindowWpf_Closing"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
 
     <CanResizeWindow:CanResizableVisionWindowWpf.Resources>

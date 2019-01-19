@@ -49,7 +49,7 @@ namespace CameraWindow.ViewModel
             {
                 CameraCollection.Add(data.ActualName);
             }
-
+           
             //初始化样式
             GridDataModelCollect = new ObservableCollection<CameraGridDataModel>();
             SetGridData(CameraCollection.Count);
@@ -100,22 +100,44 @@ namespace CameraWindow.ViewModel
         public RelayCommand CommandStartMonitor
         {
             get { return new RelayCommand(()=> {
+                //打开相机
                 foreach (var CamInfo in CamInfoDataList)
                 {
+                    if (!Vision.IsCamOpen(CamInfo.CamID))
+                        Vision.OpenCam(CamInfo.CamID, EnumColorSpace.Rgb);
+                    Vision.AttachCamWIndow(CamInfo.CamID, WindowNameArr[CamInfo.CamID], WindowsList[CamInfo.CamID]);
+                }
 
+                //取图
+                foreach (var CamInfo in CamInfoDataList)
+                {
                     if (MonitorTask[CamInfo.CamID] == null || MonitorTask[CamInfo.CamID].IsCanceled || MonitorTask[CamInfo.CamID].IsCompleted)
                     {
                         cts[CamInfo.CamID] = new CancellationTokenSource();
                         MonitorTask[CamInfo.CamID] = new Task(() => {
-                            if (!Vision.IsCamOpen(CamInfo.CamID))
-                                Vision.OpenCam(CamInfo.CamID, EnumColorSpace.Rgb);
-                            Vision.AttachCamWIndow(CamInfo.CamID, WindowNameArr[CamInfo.CamID], WindowsList[CamInfo.CamID]);
-                            var StartTime = DateTime.Now.Ticks;
                             while (!cts[CamInfo.CamID].IsCancellationRequested)
                             {
-                                IsRunning = true;
-                                Vision.GrabImage(CamInfo, true, true);
-                                Vision.DisplayImage(CamInfo);
+                                try
+                                {
+                                    IsRunning = true;
+                                    Vision.GrabImage(CamInfo, true, true);
+                                    if (CamInfo.NameForVision == "CamTop")
+                                    {
+                                        HOperatorSet.RotateImage(CamInfo.Image, out HObject ImageRotate, 90, "constant");
+                                        Vision.DisplayImage(WindowsList[CamInfo.CamID], ImageRotate, true);
+                                    }
+                                    else
+                                    {
+                                        HOperatorSet.MirrorImage(CamInfo.Image, out HObject ImageMirror, "row");
+                                        Vision.DisplayImage(WindowsList[CamInfo.CamID], ImageMirror, true);
+                                    }
+                                }
+                                catch
+                                {
+
+                                }
+                                
+                                //Vision.DisplayImage(CamInfo);
                             }
                             IsRunning = false;
                         }, cts[CamInfo.CamID].Token);
@@ -134,7 +156,7 @@ namespace CameraWindow.ViewModel
                 }
                 foreach (var CamInfo in CamInfoDataList)
                 {
-                    MonitorTask[CamInfo.CamID].Wait();
+                    MonitorTask[CamInfo.CamID].Wait(1000);
                 }
             }); }
         }

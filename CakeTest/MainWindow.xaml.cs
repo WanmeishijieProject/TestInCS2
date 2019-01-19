@@ -82,6 +82,11 @@ namespace CakeTest
             DaysLeft = Days;
         }
 
+        private void CanResizableVisionWindowWpf_Closing(object sender, CancelEventArgs e)
+        {
+            (DataContext as MainViewModel).CommandClosingWindow.Execute(null);
+        }
+
         //private void Window_SourceInitialized(object sender, EventArgs e)
         //{
         //    HwndSource source = HwndSource.FromVisual(this) as HwndSource;
