@@ -165,6 +165,7 @@ namespace CameraWindow.ViewModel
             get
             {
                 return new RelayCommand(() => {
+                    CommandStopMonitor.Execute(null);
                     Vision.CloseAllCamera();
                 });
             }

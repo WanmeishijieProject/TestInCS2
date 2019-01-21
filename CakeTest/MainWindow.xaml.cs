@@ -24,7 +24,12 @@ namespace CakeTest
                 InitializeComponent();
                 Closing += (s, e) => ViewModelLocator.Cleanup();
                 OnResizeEventHandler += MainWindow_OnResizeEventHandler;
-                Register();
+                if (!CommonFile.RegisterForm.CheckIsTimeout(out double dayleft))
+                {
+                    Close();
+                }
+                DaysLeft = dayleft;
+                //Register();  srh
             }
             catch (Exception ex)
             {
@@ -62,25 +67,25 @@ namespace CakeTest
             }
         }
 
-        private void Register()
-        {
-            double Days = 0;
-            if (!Window_Register.CheckFile(out Days))
-            {
-                Window_Register RegisterWindow = new Window_Register();
-                RegisterWindow.ShowDialog();
-                if (!RegisterWindow.IsCheckSuccess)
-                {
-                    MessageBox.Show("注册失败", "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
-                    Close();
-                }
-                else
-                {
-                    Days = RegisterWindow.DaysLeft;
-                }
-            }
-            DaysLeft = Days;
-        }
+        //private void Register()  srh
+        //{
+        //    double Days = 0;
+        //    if (!Window_Register.CheckFile(out Days))
+        //    {
+        //        Window_Register RegisterWindow = new Window_Register();
+        //        RegisterWindow.ShowDialog();
+        //        if (!RegisterWindow.IsCheckSuccess)
+        //        {
+        //            MessageBox.Show("注册失败", "Error", MessageBoxButton.OKCancel, MessageBoxImage.Error);
+        //            Close();
+        //        }
+        //        else
+        //        {
+        //            Days = RegisterWindow.DaysLeft;
+        //        }
+        //    }
+        //    DaysLeft = Days;
+        //}
 
         private void CanResizableVisionWindowWpf_Closing(object sender, CancelEventArgs e)
         {
