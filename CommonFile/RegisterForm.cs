@@ -53,12 +53,16 @@ namespace CommonFile
                 dlg.ShowDialog();
                 if (IsCheckSuccess)
                 {
-                    MessageBox.Show("注册成功");
+                    
+                    Ret = true;
+                    DaysLeft = software.DaysLeft;
                     dlg.Close();
                 }
                 else
                 {
-                    MessageBox.Show("注册失败");
+                    Ret = false;
+                    DaysLeft = 0;
+
                 }
 
             }

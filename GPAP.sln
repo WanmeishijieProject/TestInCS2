@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RegisterMeachine", "Registe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResizableWIndow", "ResizableWIndow\ResizableWIndow.csproj", "{E3944255-4278-4321-822F-6B7F1901BB3B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WPFVidwo", "WPFVidwo\WPFVidwo.csproj", "{A595C6A4-6339-4C5A-B221-702A49892971}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHalcon17Wpf", "TestHalcon17Wpf\TestHalcon17Wpf.csproj", "{D0A466EB-3AEC-4F4F-8667-57E9E6FC56BD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -105,6 +109,14 @@ Global
 		{E3944255-4278-4321-822F-6B7F1901BB3B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3944255-4278-4321-822F-6B7F1901BB3B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3944255-4278-4321-822F-6B7F1901BB3B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A595C6A4-6339-4C5A-B221-702A49892971}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A595C6A4-6339-4C5A-B221-702A49892971}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A595C6A4-6339-4C5A-B221-702A49892971}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A595C6A4-6339-4C5A-B221-702A49892971}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0A466EB-3AEC-4F4F-8667-57E9E6FC56BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0A466EB-3AEC-4F4F-8667-57E9E6FC56BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0A466EB-3AEC-4F4F-8667-57E9E6FC56BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0A466EB-3AEC-4F4F-8667-57E9E6FC56BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

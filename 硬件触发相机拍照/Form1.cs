@@ -67,7 +67,7 @@ namespace 硬件触发相机拍照
                 {
                     //HOperatorSet.GrabImageStart(hv_AcqHandle, -1);
                     HOperatorSet.GrabImage(out HObject img, hv_AcqHandle);
-                    if (hWindowControl1.InvokeRequired)//线程亲和性判定
+                    if (hWindowControl1.InvokeRequired)
                     {
                         this.Invoke(new MethodInvoker(() =>
                         {

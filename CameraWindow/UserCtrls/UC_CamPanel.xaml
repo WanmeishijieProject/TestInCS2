@@ -10,6 +10,7 @@
              Loaded="UserControl_Loaded"
              >
     <Grid>
-        <halcon:HWindowControlWPF x:Name="CamPanel" MouseDoubleClick="HWindowControlWPF_MouseDoubleClick" SizeChanged="CamPanel_SizeChanged"/>
+        <!--<halcon:HWindowControlWPF x:Name="CamPanel" MouseDoubleClick="HWindowControlWPF_MouseDoubleClick" SizeChanged="CamPanel_SizeChanged"/>-->
+        <halcon:HSmartWindowControlWPF x:Name="CamPanel" MouseDoubleClick="HWindowControlWPF_MouseDoubleClick" SizeChanged="CamPanel_SizeChanged"/>
     </Grid>
 </UserControl>

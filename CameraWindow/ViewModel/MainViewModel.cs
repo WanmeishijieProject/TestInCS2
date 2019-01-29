@@ -47,7 +47,8 @@ namespace CameraWindow.ViewModel
             CameraCollection = new ObservableCollection<string>();
             foreach (var data in CamInfoDataList)
             {
-                CameraCollection.Add(data.ActualName);
+                if(Vision.OpenCam(data.CamID, EnumColorSpace.Rgb))
+                    CameraCollection.Add(data.ActualName);
             }
            
             //初始化样式
@@ -154,10 +155,10 @@ namespace CameraWindow.ViewModel
                 {
                     cts[CamInfo.CamID].Cancel();
                 }
-                foreach (var CamInfo in CamInfoDataList)
-                {
-                    MonitorTask[CamInfo.CamID].Wait(1000);
-                }
+                //foreach (var CamInfo in CamInfoDataList)
+                //{
+                //    MonitorTask[CamInfo.CamID].Wait(10000);
+                //}
             }); }
         }
         public RelayCommand CommandCloseWindow
@@ -317,6 +318,7 @@ namespace CameraWindow.ViewModel
 
         public void SetResizingFlag(bool IsSizing = true)
         {
+            return ;
             lock (Vision.SyncData.VisionLock)
             {
                 Vision.SyncData.IsNewSizing = IsSizing;  
