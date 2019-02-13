@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:Convert="clr-namespace:CameraWindow.Converts"
+             xmlns:Cls="clr-namespace:CameraWindow.Classes"
 			 xmlns:ignore="http://www.galasoft.ch/ignore"
              StartupUri="MainWindow.xaml"
              mc:Ignorable="d ignore">
@@ -14,6 +15,7 @@
         <vm:ViewModelLocator x:Key="Locator"
                              d:IsDataSource="True" />
         <Convert:Bool2Enable x:Key="Bool2Enable"/>
+
     </Application.Resources>
     
 </Application>

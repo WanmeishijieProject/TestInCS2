@@ -16,6 +16,8 @@ using System.ComponentModel;
 using System.IO;
 using Newtonsoft.Json;
 using CameraWindow.Config;
+using CameraWindow.UserCtrls;
+using GalaSoft.MvvmLight.Ioc;
 
 namespace CameraWindow.ViewModel
 {
@@ -32,6 +34,7 @@ namespace CameraWindow.ViewModel
         CameraConfigManager CamConfigMgr = null;
         string FILE_CONFIG = AppDomain.CurrentDomain.BaseDirectory + "/Config/SystemConfig.json";
         string[] WindowNameArr = { "Cam1", "Cam2", "Cam3", "Cam4" };
+        SettingViewModel SettingVM = SimpleIoc.Default.GetInstance<SettingViewModel>();
         #endregion
 
         #region Construct
@@ -48,7 +51,7 @@ namespace CameraWindow.ViewModel
             foreach (var data in CamInfoDataList)
             {
                 if(Vision.OpenCam(data.CamID, EnumColorSpace.Rgb))
-                    CameraCollection.Add(data.ActualName);
+                    CameraCollection.Add(data.NameForVision);
             }
            
             //初始化样式
@@ -57,6 +60,9 @@ namespace CameraWindow.ViewModel
             WindowsList = new List<HWindow>() {
                 new HWindow(),new HWindow(), new HWindow(), new HWindow()
             };
+
+            //加载当前的ImageOperator
+            
         }
         #endregion
 
@@ -122,23 +128,23 @@ namespace CameraWindow.ViewModel
                                 {
                                     IsRunning = true;
                                     Vision.GrabImage(CamInfo, true, true);
-                                    if (CamInfo.NameForVision == "CamTop")
+                                    foreach (var it in SettingVM.UsedOperatorCollect)
                                     {
-                                        HOperatorSet.RotateImage(CamInfo.Image, out HObject ImageRotate, 90, "constant");
-                                        Vision.DisplayImage(WindowsList[CamInfo.CamID], ImageRotate, true);
+                                        if (CamInfo.NameForVision == it.CamName)
+                                        {
+                                            it.ImageIn = CamInfo.Image;
+                                            it.Run();
+                                            Thread.Sleep(10);
+                                            CamInfo.Image = it.ImageOut;
+                                        }
                                     }
-                                    else
-                                    {
-                                        HOperatorSet.MirrorImage(CamInfo.Image, out HObject ImageMirror, "row");
-                                        Vision.DisplayImage(WindowsList[CamInfo.CamID], ImageMirror, true);
-                                    }
+                                    Vision.DisplayImage(CamInfo,false);
+                                    Thread.Sleep(10);
                                 }
                                 catch
                                 {
 
                                 }
-                                
-                                //Vision.DisplayImage(CamInfo);
                             }
                             IsRunning = false;
                         }, cts[CamInfo.CamID].Token);
@@ -153,14 +159,22 @@ namespace CameraWindow.ViewModel
             get { return new RelayCommand(()=> {
                 foreach (var CamInfo in CamInfoDataList)
                 {
-                    cts[CamInfo.CamID].Cancel();
+                    if(cts[CamInfo.CamID]!=null)
+                        cts[CamInfo.CamID].Cancel();
                 }
-                //foreach (var CamInfo in CamInfoDataList)
-                //{
-                //    MonitorTask[CamInfo.CamID].Wait(10000);
-                //}
             }); }
         }
+        public RelayCommand CommandSetting
+        {
+            get
+            {
+                return new RelayCommand(() => {
+                    WindowImageSetting window = new WindowImageSetting();
+                    window.ShowDialog();
+                });
+            }
+        }
+        
         public RelayCommand CommandCloseWindow
         {
             get

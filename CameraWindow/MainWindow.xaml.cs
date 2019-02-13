@@ -13,19 +13,17 @@ namespace CameraWindow
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : CanResizableVisionWindowWpf
+    public partial class MainWindow : Window
     {
         public MainWindow()
         {
             InitializeComponent();
-            OnResizeEventHandler += MainWindow_OnResizeEventHandler;
+            
             Closing += (s, e) => ViewModelLocator.Cleanup();
+           
         }
 
-        private void MainWindow_OnResizeEventHandler(object sender, bool e)
-        {
-            (DataContext as MainViewModel).SetResizingFlag(e);
-        }
+ 
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
@@ -36,7 +34,5 @@ namespace CameraWindow
             (DataContext as MainViewModel).CommandCloseWindow.Execute(null);
         }
 
-
-    
     }
 }

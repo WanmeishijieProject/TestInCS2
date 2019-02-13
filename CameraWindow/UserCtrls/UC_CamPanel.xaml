@@ -3,14 +3,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-              xmlns:halcon="clr-namespace:HalconDotNet;assembly=halcondotnet"
+             xmlns:halcon="clr-namespace:HalconDotNet;assembly=halcondotnet"
              xmlns:local="clr-namespace:CameraWindow.UserCtrls"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800"
              Loaded="UserControl_Loaded"
              >
     <Grid>
-        <!--<halcon:HWindowControlWPF x:Name="CamPanel" MouseDoubleClick="HWindowControlWPF_MouseDoubleClick" SizeChanged="CamPanel_SizeChanged"/>-->
-        <halcon:HSmartWindowControlWPF x:Name="CamPanel" MouseDoubleClick="HWindowControlWPF_MouseDoubleClick" SizeChanged="CamPanel_SizeChanged"/>
+        <!--<halcon:HWindowControlWPF x:Name="CamPanel" SizeChanged="CamPanel_SizeChanged"/>-->
+        <halcon:HSmartWindowControlWPF x:Name="CamPanel"/>
     </Grid>
 </UserControl>

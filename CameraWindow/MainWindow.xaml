@@ -1,4 +1,4 @@
-﻿<ResizeWindow:CanResizableVisionWindowWpf x:Class="CameraWindow.MainWindow"
+﻿<Window x:Class="CameraWindow.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,24 +6,25 @@
         xmlns:UserCtrls="clr-namespace:CameraWindow.UserCtrls"
         xmlns:ResizeWindow="clr-namespace:ResizableWIndow;assembly=ResizableWIndow"
         xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:Halcon="clr-namespace:HalconDotNet;assembly=halcondotnet"
         mc:Ignorable="d ignore"
         Height="600"
         Width="800"
-        Title="MVVM Light Application"
+        Title="CamView"
         DataContext="{Binding Main, Source={StaticResource Locator}}"
         Loaded="Window_Loaded"
         Closing="Window_Closing"
         WindowState="Maximized" 
         WindowStartupLocation="CenterScreen"
         >
-    <ResizeWindow:CanResizableVisionWindowWpf.Resources>
+    <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Skins/MainSkin.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
-    </ResizeWindow:CanResizableVisionWindowWpf.Resources>
-    <ResizeWindow:CanResizableVisionWindowWpf.InputBindings>
+    </Window.Resources>
+    <Window.InputBindings>
         <KeyBinding Gesture="Control+1" 
               Command="{Binding CommandMaxCamera}" CommandParameter="1"/>
         <KeyBinding Gesture="Control+2"  
@@ -34,7 +35,7 @@
               Command="{Binding CommandMaxCamera}" CommandParameter="4"/>
         <KeyBinding Gesture="Control+Q"  
               Command="{Binding CommandResumeCamera}"/>
-    </ResizeWindow:CanResizableVisionWindowWpf.InputBindings>
+    </Window.InputBindings>
     <Grid x:Name="LayoutRoot">
         <Grid.RowDefinitions>
             <RowDefinition/>
@@ -45,14 +46,15 @@
             <ColumnDefinition/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
+       
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[0].Row}" x:Name="Cam1"
                                Grid.Column="{Binding GridDataModelCollect[0].Col}" Margin="1" 
                                Grid.RowSpan="{Binding GridDataModelCollect[0].RowSpan}" 
                                Grid.ColumnSpan="{Binding GridDataModelCollect[0].ColSpan}" 
                                Visibility="{Binding GridDataModelCollect[0].Visible}"
                                CamWindowHandle="{Binding WindowsList[0],Mode=OneWayToSource}"
-                               
                                />
+       
         <UserCtrls:UC_CamPanel Grid.Row="{Binding GridDataModelCollect[1].Row}" x:Name="Cam2"
                                Grid.Column="{Binding GridDataModelCollect[1].Col}" Margin="1" 
                                Grid.RowSpan="{Binding GridDataModelCollect[1].RowSpan}" 
@@ -75,14 +77,16 @@
                                CamWindowHandle="{Binding WindowsList[3],Mode=OneWayToSource}"
                                 />
 
-        <Grid Grid.Column="1" Grid.Row="2" Width="300" HorizontalAlignment="Right">
+        <Grid Grid.Column="1" Grid.Row="2" Width="450" HorizontalAlignment="Right">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition/>
+                <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0"  Margin="5,2" Content="开始" Command="{Binding CommandStartMonitor}" IsEnabled="{Binding IsRunning, Converter={StaticResource Bool2Enable}, ConverterParameter=Start}"/>
             <Button Grid.Column="1" Margin="5,2"  Content="停止" Command="{Binding CommandStopMonitor}" IsEnabled="{Binding IsRunning, Converter={StaticResource Bool2Enable}, ConverterParameter=Stop}"/>
+            <Button Grid.Column="2" Margin="5,2"  Content="设置" Command="{Binding CommandSetting}" />
         </Grid>
        
     </Grid>
-</ResizeWindow:CanResizableVisionWindowWpf>
+</Window>
