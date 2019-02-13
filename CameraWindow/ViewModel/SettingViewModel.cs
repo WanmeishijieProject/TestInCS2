@@ -1,4 +1,5 @@
 ﻿using CameraWindow.ImageOperator;
+using CameraWindow.ImageOperator.Implement;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using System;
@@ -19,6 +20,7 @@ namespace CameraWindow.ViewModel
     {
         const string PATH_OPERATOR = @"..\..\ImageOperator\Implement";
         const string FILE_IMAGEOPERATOR = "ImageOperator.data";
+        public ObservableCollection<IImageOperator> list { get; set; }
         public SettingViewModel()
         {
             UsedOperatorCollectRawData = new ObservableCollection<IImageOperator>();
@@ -35,8 +37,8 @@ namespace CameraWindow.ViewModel
             {
                 using (Stream stream = File.OpenRead(FILE_IMAGEOPERATOR))
                 {
-                    var len = stream.Length;
                     var bfmt = new BinaryFormatter();
+                    var len = stream.Length;
                     while (len>0 && stream.Position<len)
                     {
                         IImageOperator op = bfmt.Deserialize(stream) as IImageOperator;
@@ -69,7 +71,7 @@ namespace CameraWindow.ViewModel
         {
             get { return new RelayCommand<string>(StrOperator=> {
                 var type = Type.GetType(@"CameraWindow.ImageOperator.Implement." + StrOperator);
-                IImageOperator op = Activator.CreateInstance(type,new object[]{null,null}) as IImageOperator;
+                IImageOperator op = Activator.CreateInstance(type) as IImageOperator;
                 UsedOperatorCollectRawData.Add(op);
             }); }
         }
@@ -85,8 +87,6 @@ namespace CameraWindow.ViewModel
             }
         }
         
-
-
         /// <summary>
         /// 存储已经选在的Operator
         /// </summary>
@@ -120,6 +120,8 @@ namespace CameraWindow.ViewModel
         /// 当前选择的相机名称
         /// </summary>
         public object CurSelectedCamName { get; set; }
+
+       
 
     }
 }

@@ -14,10 +14,18 @@ namespace CameraWindow.ImageOperator.Implement
         MirrorX,
         MirrorY,
     }
+    public enum EnumRotateAngle
+    {
+        Angle90=90,
+        Angle180=180,
+        Angle270=270,
+    }
 
     [Serializable]
     public class MirrorImage : ImageOperatorBase
     {
+        public MirrorImage() { }
+
         /// <summary>
         /// 反序列化
         /// </summary>
@@ -54,18 +62,35 @@ namespace CameraWindow.ImageOperator.Implement
             switch (MirrorType)
             {
                 case EnumMirrorType.MirrorX:
-                    HOperatorSet.MirrorImage(ImageIn, out HObject ImageMirroredX, "row");
-                    ImageOut = ImageMirroredX;
+                    HOperatorSet.MirrorImage(ImageIn, out imageOut, "row");
+                    ImageIn.Dispose();
                     break;
                 case EnumMirrorType.MirrorY:
-                    HOperatorSet.MirrorImage(ImageIn, out HObject ImageMirroredY, "column");
-                    ImageOut = ImageMirroredY;
+                    HOperatorSet.MirrorImage(ImageIn, out imageOut, "column");
+                    ImageIn.Dispose();
+                    break;
+                default:
+                    break;
+            } 
+        }
+        public override void Run(HObject ImageIn, out HObject ImageOut)
+        {
+            ImageOut = null;
+            switch (MirrorType)
+            {
+                case EnumMirrorType.MirrorX:
+                    HOperatorSet.MirrorImage(ImageIn, out ImageOut, "row");
+                    ImageIn.Dispose();
+                    break;
+                case EnumMirrorType.MirrorY:
+                    HOperatorSet.MirrorImage(ImageIn, out ImageOut, "column");
+                    ImageIn.Dispose();
                     break;
                 default:
                     break;
             }
-            ImageIn.Dispose();
         }
+
 
         [Browsable(false)]
         public override string Summary

@@ -17,6 +17,11 @@ namespace CameraWindow.ImageOperator
     [Serializable()]
     public class ImageOperatorBase : IImageOperator , INotifyPropertyChanged
     {
+        public ImageOperatorBase()
+        {
+
+        }
+
         /// <summary>
         /// 反序列化
         /// </summary>
@@ -35,9 +40,9 @@ namespace CameraWindow.ImageOperator
         string summary="";
 
         [NonSerialized()]
-        HObject imageIn = null;
+        protected HObject imageIn = null;
         [NonSerialized()]
-        HObject imageOut = null;
+        protected HObject imageOut = null;
 
 
         [Browsable(false)]
@@ -120,5 +125,9 @@ namespace CameraWindow.ImageOperator
             info.AddValue("Summary", Summary);
         }
 
+        public virtual void Run(HObject ImageIn, out HObject ImageOut)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

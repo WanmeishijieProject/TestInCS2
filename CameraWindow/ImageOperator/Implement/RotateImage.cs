@@ -13,6 +13,8 @@ namespace CameraWindow.ImageOperator.Implement
     [Serializable]
     public class RotateImage : ImageOperatorBase
     {
+        public RotateImage() { }
+
         /// <summary>
         /// 反序列化
         /// </summary>
@@ -22,14 +24,14 @@ namespace CameraWindow.ImageOperator.Implement
         {
             if (info != null)
             {
-                angle = (double)info.GetValue("Angle", typeof(double));
+                angle = (EnumRotateAngle)info.GetValue("Angle", typeof(EnumRotateAngle));
             }
         }
 
-        double angle;
+        EnumRotateAngle angle;
 
         [Description("设置图像旋转的角度")]
-        public double Angle
+        public EnumRotateAngle Angle
         {
             get { return angle; }
             set
@@ -44,10 +46,17 @@ namespace CameraWindow.ImageOperator.Implement
         }
         public override void Run()
         {
-            HOperatorSet.RotateImage(ImageIn, out HObject ImageRotated, Angle%360, "constant");
+            HOperatorSet.RotateImage(ImageIn, out imageOut, (double)Angle%360, "constant");
             ImageIn.Dispose();
-            ImageOut = ImageRotated;
         }
+
+        public override void Run(HObject ImageIn,out HObject ImageOut)
+        {
+            ImageOut = null;
+            HOperatorSet.RotateImage(ImageIn, out ImageOut, (double)Angle % 360, "constant");
+            ImageIn.Dispose();
+        }
+
         [Browsable(false)]
         public override string Summary
         {

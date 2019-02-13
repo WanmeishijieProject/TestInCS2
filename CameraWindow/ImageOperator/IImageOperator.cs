@@ -19,5 +19,6 @@ namespace CameraWindow.ImageOperator
         /// </summary>
         string CamName { get; set; }
         void Run();
+        void Run(HObject ImageIn, out HObject ImageOut);
     }
 }

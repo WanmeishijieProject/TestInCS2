@@ -11,13 +11,13 @@ using System.Threading;
 using System;
 using System.Threading.Tasks;
 using System.Linq;
-using VisionDemoLib;
 using System.ComponentModel;
 using System.IO;
 using Newtonsoft.Json;
 using CameraWindow.Config;
 using CameraWindow.UserCtrls;
 using GalaSoft.MvvmLight.Ioc;
+
 
 namespace CameraWindow.ViewModel
 {
@@ -60,9 +60,6 @@ namespace CameraWindow.ViewModel
             WindowsList = new List<HWindow>() {
                 new HWindow(),new HWindow(), new HWindow(), new HWindow()
             };
-
-            //加载当前的ImageOperator
-            
         }
         #endregion
 
@@ -138,10 +135,10 @@ namespace CameraWindow.ViewModel
                                             CamInfo.Image = it.ImageOut;
                                         }
                                     }
-                                    Vision.DisplayImage(CamInfo,false);
                                     Thread.Sleep(10);
+                                    Vision.DisplayImage(CamInfo,false);  
                                 }
-                                catch
+                                catch(Exception ex)
                                 {
 
                                 }
@@ -153,7 +150,12 @@ namespace CameraWindow.ViewModel
                 }
             }); }
         }
-
+        private void Debug(HObject ImageIn, out HObject ImageOut)
+        {
+            ImageOut = null;
+            HOperatorSet.RotateImage(ImageIn, out ImageOut, 90, "constant");
+            ImageIn.Dispose();
+        }
         public RelayCommand CommandStopMonitor
         {
             get { return new RelayCommand(()=> {
