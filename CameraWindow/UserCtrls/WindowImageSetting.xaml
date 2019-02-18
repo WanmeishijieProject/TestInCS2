@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:cls="clr-namespace:CameraWindow.Classes"
         xmlns:local="clr-namespace:CameraWindow.UserCtrls"
         xmlns:halcon="clr-namespace:HalconDotNet;assembly=halcondotnet"
         xmlns:dxprg="http://schemas.devexpress.com/winfx/2008/xaml/propertygrid" x:Class="CameraWindow.UserCtrls.WindowImageSetting"
@@ -10,6 +11,7 @@
         Title="WindowImageSetting" Height="700" Width="1000"
         
         DataContext="{Binding SettingVM, Source={StaticResource Locator}}">
+   
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition MinWidth="100"/>
@@ -17,20 +19,21 @@
             <ColumnDefinition MinWidth="250"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListBox Name="ListBox_ValabileOperator" Margin="1,2" ItemsSource="{Binding AvalibleImageOperatorCollect}" MouseDoubleClick="ListBox_ValabileOperator_MouseDoubleClick"/>
+        <cls:DragableListBox x:Name="ListBox_ValabileOperator" Margin="1,2" ItemsSource="{Binding AvalibleImageOperatorCollect}" MouseDoubleClick="ListBox_ValabileOperator_MouseDoubleClick" AllowDrop="False"/>
         <GridSplitter Grid.Column="1" VerticalAlignment="Stretch" HorizontalAlignment="Center"/>
         <Grid Grid.Column="2" Margin="1,2">
             <Grid.RowDefinitions>
                 <RowDefinition/>
                 <RowDefinition Height="300"/>
             </Grid.RowDefinitions>
-            <ListBox Name="ListBox_UsedOperator" Grid.Column="0"  ItemsSource="{Binding UsedOperatorCollect}">
-                <ListBox.ContextMenu>
+            <cls:DragableListBox x:Name="ListBox_UsedOperator" Grid.Column="0"  ItemsSource="{Binding UsedOperatorCollect}" CommandOnDrop="{Binding CommandOnDrop}">
+                <cls:DragableListBox.ContextMenu>
                     <ContextMenu>
+                        <!--<MenuItem Header="删除" Command="{Binding CommandDeleteOperatorUsed}" CommandParameter="{Binding Source={x:Reference ListBox_UsedOperator}, Path=SelectedItem}"/>-->
                         <MenuItem Header="删除" Command="{Binding CommandDeleteOperatorUsed}" CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ContextMenu}, Path=PlacementTarget.SelectedItem}"/>
                     </ContextMenu>
-                </ListBox.ContextMenu>
-                <ListBox.ItemTemplate>
+                </cls:DragableListBox.ContextMenu>
+                <cls:DragableListBox.ItemTemplate>
                     <DataTemplate>
                         <Grid>
                             <Grid.ColumnDefinitions>
@@ -41,8 +44,8 @@
                             <TextBlock Grid.Column="1" Text="{Binding Summary}" HorizontalAlignment="Left"/>
                         </Grid>
                     </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+                </cls:DragableListBox.ItemTemplate>
+            </cls:DragableListBox>
             <ListView Name="ListBox_Cam" Grid.Row="1" Margin="1,2" ItemsSource="{Binding Main.CameraCollection, Source={StaticResource Locator}}" SelectedValue="{Binding CurSelectedCamName}"
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled" MinWidth="300">
                 <ListView.ItemsPanel>

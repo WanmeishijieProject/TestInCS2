@@ -150,12 +150,7 @@ namespace CameraWindow.ViewModel
                 }
             }); }
         }
-        private void Debug(HObject ImageIn, out HObject ImageOut)
-        {
-            ImageOut = null;
-            HOperatorSet.RotateImage(ImageIn, out ImageOut, 90, "constant");
-            ImageIn.Dispose();
-        }
+  
         public RelayCommand CommandStopMonitor
         {
             get { return new RelayCommand(()=> {

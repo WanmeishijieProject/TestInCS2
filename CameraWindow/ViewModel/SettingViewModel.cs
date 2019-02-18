@@ -1,4 +1,5 @@
-﻿using CameraWindow.ImageOperator;
+﻿using CameraWindow.Classes;
+using CameraWindow.ImageOperator;
 using CameraWindow.ImageOperator.Implement;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -71,8 +72,11 @@ namespace CameraWindow.ViewModel
         {
             get { return new RelayCommand<string>(StrOperator=> {
                 var type = Type.GetType(@"CameraWindow.ImageOperator.Implement." + StrOperator);
-                IImageOperator op = Activator.CreateInstance(type) as IImageOperator;
-                UsedOperatorCollectRawData.Add(op);
+                if (type != null)
+                {
+                    IImageOperator op = Activator.CreateInstance(type) as IImageOperator;
+                    UsedOperatorCollectRawData.Add(op);
+                }
             }); }
         }
 
@@ -86,7 +90,22 @@ namespace CameraWindow.ViewModel
                 });
             }
         }
-        
+
+        public RelayCommand<DragDropData> CommandOnDrop
+        {
+            get
+            {
+                return new RelayCommand<DragDropData>(item => {
+                    if (item != null)
+                    {
+                        AvalibleOperatorCommand.Execute(item.DataObj.ToString());
+                    }
+                });
+            }
+        }
+
+
+
         /// <summary>
         /// 存储已经选在的Operator
         /// </summary>
@@ -121,7 +140,7 @@ namespace CameraWindow.ViewModel
         /// </summary>
         public object CurSelectedCamName { get; set; }
 
-       
+        
 
     }
 }

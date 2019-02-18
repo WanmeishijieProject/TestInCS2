@@ -210,6 +210,8 @@
     <Compile Include="Classes\CameraTypeConvert.cs" />
     <Compile Include="Classes\ComboBoxItemTypeConvert.cs" />
     <Compile Include="Classes\ComboItemConvert ForCam.cs" />
+    <Compile Include="Classes\DragableListBox.cs" />
+    <Compile Include="Classes\DragDropData.cs" />
     <Compile Include="Classes\UserCursor.cs" />
     <Compile Include="Classes\XPropDiscriptor.cs" />
     <Compile Include="Classes\XProperty.cs" />

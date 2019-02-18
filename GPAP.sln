@@ -41,6 +41,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHalcon17Wpf", "TestHalc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestHalcon17Winform", "TestHalcon17Winform\TestHalcon17Winform.csproj", "{45804A35-75C0-4336-9268-58902E0DBFF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FFMPEG拉流测试", "FFMPEG拉流测试\FFMPEG拉流测试.csproj", "{8E340D7A-23D2-482A-ABA6-1EEF6F974F0D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagrimListBox", "DiagrimListBox\DiagrimListBox.csproj", "{7B81050D-14E1-41B7-8E97-46953F3EE60F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +127,14 @@ Global
 		{45804A35-75C0-4336-9268-58902E0DBFF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45804A35-75C0-4336-9268-58902E0DBFF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45804A35-75C0-4336-9268-58902E0DBFF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E340D7A-23D2-482A-ABA6-1EEF6F974F0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E340D7A-23D2-482A-ABA6-1EEF6F974F0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E340D7A-23D2-482A-ABA6-1EEF6F974F0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E340D7A-23D2-482A-ABA6-1EEF6F974F0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7B81050D-14E1-41B7-8E97-46953F3EE60F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7B81050D-14E1-41B7-8E97-46953F3EE60F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7B81050D-14E1-41B7-8E97-46953F3EE60F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7B81050D-14E1-41B7-8E97-46953F3EE60F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -36,5 +36,6 @@ namespace CameraWindow.UserCtrls
                 SettingVM.AvalibleOperatorCommand.Execute(op.ToString());
             }
         }
+
     }
 }

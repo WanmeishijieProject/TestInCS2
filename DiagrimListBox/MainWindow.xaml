@@ -1,0 +1,114 @@
+﻿<Window x:Class="DiagrimListBox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:model="clr-namespace:DiagrimListBox.Model"
+        xmlns:ignore="http://www.galasoft.ch/ignore"
+        mc:Ignorable="d ignore"
+        Height="600"
+        Width="800"
+        Title="MVVM Light Application"
+        Name="Refrence"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Skins/MainSkin.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <CompositeCollection x:Key="Col">
+                <CollectionContainer Collection="{Binding DataContext.NodeCollect, Source={x:Reference Refrence}}"/>
+                <CollectionContainer Collection="{Binding DataContext.ConnectorCollect, Source={x:Reference Refrence}}"/>
+            </CompositeCollection>
+
+            <!--呈现具体的项目  Node-->
+            <DataTemplate DataType="{x:Type model:Node}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Thumb Grid.Row="0" DragDelta="Thumb_DragDelta" Background="AliceBlue"
+                           IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Mode=OneWay}">
+                        <Thumb.Template>
+                            <ControlTemplate>
+                                <Grid Background="Green">
+                                    
+                                </Grid>
+                            </ControlTemplate>
+                        </Thumb.Template>
+                    </Thumb>
+                    <TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="20"/>
+                </Grid>
+                
+            </DataTemplate>
+            <!--呈现具体的项目  Connector-->
+            <DataTemplate DataType="{x:Type model:Connector}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Thumb Grid.Row="0" DragDelta="Thumb_DragDelta" Background="AliceBlue"
+                           IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Mode=OneWay}">
+                        <Thumb.Template>
+                            <ControlTemplate>
+                                <Grid Background="Green">
+
+                                </Grid>
+                            </ControlTemplate>
+                        </Thumb.Template>
+                    </Thumb>
+                    <TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="20"/>
+                    <TextBlock Grid.Row="2" Text="{Binding Name}" FontSize="20"/>
+                    <TextBlock Grid.Row="3" Text="{Binding Name}" FontSize="20"/>
+                    
+                </Grid>
+            </DataTemplate>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <ListBox Grid.Column="1" ItemsSource="{StaticResource Col}">
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas AllowDrop="True" Background="LightBlue" IsItemsHost="True"/>
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Canvas.Left" Value="{Binding Location.X}"/>
+                    <Setter Property="Canvas.Top" Value="{Binding Location.Y}"/>
+                    <!--<Setter Property="FocusVisualStyle" Value="{StaticResource EmptyFocusVisualStyle}"/>-->
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ListBoxItem">
+                                <ContentPresenter x:Name="Content"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Content" Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect Color="Gray" ShadowDepth="10" BlurRadius="10"/>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Trigger>
+                                    <!--<DataTrigger Binding="{Binding IsNew}" Value="True">
+                                        <Setter Property="Opacity" Value=".5"/>
+                                    </DataTrigger>-->
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </Grid>
+</Window>
