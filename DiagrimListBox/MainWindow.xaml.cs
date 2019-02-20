@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls.Primitives;
 using DiagrimListBox.Model;
 using DiagrimListBox.ViewModel;
@@ -33,6 +34,54 @@ namespace DiagrimListBox
             //node.Location.Value = Point.Add(node.Location.Value, new Vector(e.HorizontalChange, e.VerticalChange));
         }
 
-      
+        private void StartThum_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            var thumb = sender as Thumb;
+            if (thumb == null)
+                return;
+
+            var node = thumb.DataContext as LineBez;
+            if (node == null)
+                return;
+            node.StartPoint.X += e.HorizontalChange;
+            node.StartPoint.Y += e.VerticalChange;
+        }
+
+        private void MidThum_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            var thumb = sender as Thumb;
+            if (thumb == null)
+                return;
+
+            var node = thumb.DataContext as LineBez;
+            if (node == null)
+                return;
+            node.MidPoint.X += e.HorizontalChange;
+            node.MidPoint.Y += e.VerticalChange;
+            Console.WriteLine($"{node.MidPoint.X},{node.MidPoint.Y}");
+        }
+
+        private void EndThum_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            var thumb = sender as Thumb;
+            if (thumb == null)
+                return;
+
+            var node = thumb.DataContext as LineBez;
+            if (node == null)
+                return;
+            node.EndPoint.X += e.HorizontalChange;
+            node.EndPoint.Y += e.VerticalChange;
+        }
+
+        private void ListBox_PreviewMouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+
+        }
+
+        private void ListBox_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+
+        }
     }
 }

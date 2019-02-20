@@ -35,7 +35,7 @@ namespace DiagrimListBox.Model
                 if (location != value)
                 {
                     location = value;
-                    RaisePropertyChanged();
+                    //RaisePropertyChanged();
                 }
             }
         }

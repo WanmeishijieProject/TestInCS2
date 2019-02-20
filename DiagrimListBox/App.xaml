@@ -4,6 +4,7 @@
              xmlns:vm="clr-namespace:DiagrimListBox.ViewModel"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:cvt="clr-namespace:DiagrimListBox.Converters"
 			 xmlns:ignore="http://www.galasoft.ch/ignore"
              StartupUri="MainWindow.xaml"
              mc:Ignorable="d ignore">
@@ -12,6 +13,7 @@
         <!--Global View Model Locator-->
         <vm:ViewModelLocator x:Key="Locator"
                              d:IsDataSource="True" />
+        <cvt:DragableObject2Visibale x:Key="DragableObject2Visibale"/>
     </Application.Resources>
     
 </Application>

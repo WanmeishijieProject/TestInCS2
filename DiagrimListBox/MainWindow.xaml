@@ -20,6 +20,26 @@
             <CompositeCollection x:Key="Col">
                 <CollectionContainer Collection="{Binding DataContext.NodeCollect, Source={x:Reference Refrence}}"/>
                 <CollectionContainer Collection="{Binding DataContext.ConnectorCollect, Source={x:Reference Refrence}}"/>
+                <CollectionContainer Collection="{Binding DataContext.LineCollect, Source={x:Reference Refrence}}"/>
+
+                <ListBoxItem Canvas.Left="{Binding SelectedObject.StartPoint.X}" 
+                             Canvas.Top="{Binding SelectedObject.StartPoint.Y}"
+                             Visibility="{Binding SelectedObject,Converter={StaticResource DragableObject2Visibale}}">
+                    <Thumb Name="StartThum" DataContext="{Binding SelectedObject}" DragDelta="StartThum_DragDelta" Height="20" Width="20"
+                               Background="Red"/>
+                </ListBoxItem>
+                <ListBoxItem Canvas.Left="{Binding SelectedObject.MidPoint.X}" 
+                             Canvas.Top="{Binding SelectedObject.MidPoint.Y}"
+                             Visibility="{Binding SelectedObject,Converter={StaticResource DragableObject2Visibale}}">
+                    <Thumb Name="MidThum" DataContext="{Binding SelectedObject}" DragDelta="MidThum_DragDelta" Height="20" Width="20"
+                               Background="Red"/>
+                </ListBoxItem>
+                <ListBoxItem Canvas.Left="{Binding SelectedObject.EndPoint.X}" 
+                             Canvas.Top="{Binding SelectedObject.EndPoint.Y}"
+                             Visibility="{Binding SelectedObject,Converter={StaticResource DragableObject2Visibale}}">
+                    <Thumb Name="EndThum" DataContext="{Binding SelectedObject}" DragDelta="EndThum_DragDelta" Height="20" Width="20"
+                               Background="Red"/>
+                </ListBoxItem>
             </CompositeCollection>
 
             <!--呈现具体的项目  Node-->
@@ -43,9 +63,10 @@
                 </Grid>
                 
             </DataTemplate>
+            
             <!--呈现具体的项目  Connector-->
             <DataTemplate DataType="{x:Type model:Connector}">
-                <Grid>
+                <Grid Background="White">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="30"/>
                         <RowDefinition Height="Auto"/>
@@ -57,7 +78,7 @@
                         <Thumb.Template>
                             <ControlTemplate>
                                 <Grid Background="Green">
-
+                                    <TextBlock Text="{Binding Name}" FontSize="30" FontWeight="Bold"/>
                                 </Grid>
                             </ControlTemplate>
                         </Thumb.Template>
@@ -68,6 +89,27 @@
                     
                 </Grid>
             </DataTemplate>
+
+            <!--呈现Line-->
+            <DataTemplate DataType="{x:Type model:LineBez}">
+                <Grid>
+                    <Path StrokeThickness="3" x:Name="Line">
+                        <Path.Stroke>
+                            <SolidColorBrush Color="SeaGreen"/>
+                        </Path.Stroke>
+                        <Path.Data>
+                            <PathGeometry>
+                                <PathFigure StartPoint="{Binding StartPoint.PointValue}">
+                                    <QuadraticBezierSegment  
+                                                   Point1="{Binding PointV.PointValue}"
+                                                   Point2="{Binding EndPoint.PointValue}" />
+                                </PathFigure>
+                            </PathGeometry>
+                        </Path.Data>
+                    </Path>
+                </Grid>
+            </DataTemplate>
+            
         </ResourceDictionary>
     </Window.Resources>
 
@@ -76,7 +118,9 @@
             <ColumnDefinition Width="250"/>
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
-        <ListBox Grid.Column="1" ItemsSource="{StaticResource Col}">
+        <ListBox Grid.Column="1" ItemsSource="{StaticResource Col}" SelectedItem="{Binding SelectedObject, Mode=OneWayToSource}"
+                 PreviewMouseMove="ListBox_PreviewMouseMove"
+                 PreviewMouseDown="ListBox_PreviewMouseDown">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas AllowDrop="True" Background="LightBlue" IsItemsHost="True"/>

@@ -70,9 +70,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Converters\DragableObject2Visibale.cs" />
     <Compile Include="Model\BindablePoint.cs" />
     <Compile Include="Model\Connector.cs" />
     <Compile Include="Model\DragableObject.cs" />
+    <Compile Include="Model\LineBez.cs" />
     <Compile Include="Model\Node.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
