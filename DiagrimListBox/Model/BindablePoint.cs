@@ -23,6 +23,9 @@ namespace DiagrimListBox.Model
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(PropertyName));
         }
+
+       
+
         double x;
         double y;
         public Point PointValue
@@ -33,7 +36,7 @@ namespace DiagrimListBox.Model
             }
             set
             {
-                this.X = value.X;this.Y = value.Y;
+                this.X = value.X; this.Y = value.Y;
             }
         }
         public double X
@@ -63,7 +66,24 @@ namespace DiagrimListBox.Model
                 }
             }
         }
+        public static BindablePoint operator /(BindablePoint bp, double c)
+        {
+            if (c != 0)
+            {
+                return new BindablePoint(bp.X/c,bp.Y/c);
+            }
+            else
+                throw new DivideByZeroException();
 
-
+        }
+        public static BindablePoint operator +(BindablePoint bp1, BindablePoint bp2)
+        {
+            return new BindablePoint(bp1.X+bp2.X,bp1.Y+bp2.Y);
+        }
+        public BindablePoint Copy()
+        {
+            return new BindablePoint(this.X, this.Y);
+        }
+       
     }
 }

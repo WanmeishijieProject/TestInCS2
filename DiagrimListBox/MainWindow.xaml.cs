@@ -83,5 +83,10 @@ namespace DiagrimListBox
         {
 
         }
+
+        private void SnapThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+
+        }
     }
 }

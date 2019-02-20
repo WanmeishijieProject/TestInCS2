@@ -10,9 +10,11 @@ namespace DiagrimListBox.Model
     public class LineBez : DragableObject
     {
 
-        public LineBez(string Name) : base(Name)
+        public LineBez(string Name, BindablePoint P1, BindablePoint P2) : base(Name)
         {
-           
+            this.StartPoint = P1;
+            this.EndPoint = P2;
+            MidPoint = (P1 + P2) / 2;
         }
 
         /// <summary>

@@ -10,6 +10,7 @@ namespace DiagrimListBox.Model
 {
     public class DragableObject : INotifyPropertyChanged
     {
+
         public DragableObject(string Name)
         {
             this.Name = Name;
@@ -35,7 +36,6 @@ namespace DiagrimListBox.Model
                 if (location != value)
                 {
                     location = value;
-                    //RaisePropertyChanged();
                 }
             }
         }

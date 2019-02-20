@@ -21,7 +21,8 @@
                 <CollectionContainer Collection="{Binding DataContext.NodeCollect, Source={x:Reference Refrence}}"/>
                 <CollectionContainer Collection="{Binding DataContext.ConnectorCollect, Source={x:Reference Refrence}}"/>
                 <CollectionContainer Collection="{Binding DataContext.LineCollect, Source={x:Reference Refrence}}"/>
-
+                <CollectionContainer Collection="{Binding DataContext.SnapPotCollect, Source={x:Reference Refrence}}"/>
+                
                 <ListBoxItem Canvas.Left="{Binding SelectedObject.StartPoint.X}" 
                              Canvas.Top="{Binding SelectedObject.StartPoint.Y}"
                              Visibility="{Binding SelectedObject,Converter={StaticResource DragableObject2Visibale}}">
@@ -44,24 +45,36 @@
 
             <!--呈现具体的项目  Node-->
             <DataTemplate DataType="{x:Type model:Node}">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="Auto"/>
-                    </Grid.RowDefinitions>
-                    <Thumb Grid.Row="0" DragDelta="Thumb_DragDelta" Background="AliceBlue"
+                <Border  Width="{Binding NodeWidth}" 
+                         Height="{Binding NodeHeight}" 
+                         Background="Yellow"
+                         Padding="3">
+                    <Grid >
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <Thumb Grid.Row="0" DragDelta="Thumb_DragDelta" Background="AliceBlue"
                            IsEnabled="{Binding IsSelected, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}, Mode=OneWay}">
-                        <Thumb.Template>
-                            <ControlTemplate>
-                                <Grid Background="Green">
-                                    
-                                </Grid>
-                            </ControlTemplate>
-                        </Thumb.Template>
-                    </Thumb>
-                    <TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="20"/>
-                </Grid>
-                
+                            <Thumb.Template>
+                                <ControlTemplate>
+                                    <Grid Background="Green">
+
+                                    </Grid>
+                                </ControlTemplate>
+                            </Thumb.Template>
+                        </Thumb>
+                        <Grid Grid.Row="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition/>
+                                <RowDefinition/>
+                            </Grid.RowDefinitions>
+                            <TextBlock Grid.Row="0" Text="{Binding Name}" FontSize="20" HorizontalAlignment="Center"/>
+                            <Button Grid.Row="1" Content="{Binding Name}" Background="White" FontSize="25"/>
+                        </Grid>
+                        
+                    </Grid>
+                </Border>
             </DataTemplate>
             
             <!--呈现具体的项目  Connector-->
@@ -86,7 +99,6 @@
                     <TextBlock Grid.Row="1" Text="{Binding Name}" FontSize="20"/>
                     <TextBlock Grid.Row="2" Text="{Binding Name}" FontSize="20"/>
                     <TextBlock Grid.Row="3" Text="{Binding Name}" FontSize="20"/>
-                    
                 </Grid>
             </DataTemplate>
 
@@ -109,7 +121,36 @@
                     </Path>
                 </Grid>
             </DataTemplate>
-            
+
+            <!--呈现SnapPot-->
+            <DataTemplate DataType="{x:Type model:SnapPot}">
+                <Thumb Name="SnapThumb" DragDelta="SnapThumb_DragDelta"
+                           IsEnabled="{Binding IsSelected,RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}">
+                    <Thumb.Template>
+                        <ControlTemplate>
+                            <Path Stroke="Black" Fill="Red" RenderTransformOrigin="0.0,0.0">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathFigure StartPoint="-10,0">
+                                            <ArcSegment IsLargeArc="True"
+                                                            Size="10, 10"
+                                                            Point="10, 0"
+                                                            SweepDirection="Clockwise" 
+                                                            />
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </Path.Data>
+                                <Path.RenderTransform>
+                                    <RotateTransform Angle="{Binding Angle}"/>
+                                </Path.RenderTransform>
+                            </Path>
+                            <!--<Canvas>
+                                    <Ellipse Width="10" Height="10" Fill="Red"/>
+                                </Canvas>-->
+                        </ControlTemplate>
+                    </Thumb.Template>
+                </Thumb>
+            </DataTemplate>
         </ResourceDictionary>
     </Window.Resources>
 

@@ -76,6 +76,7 @@
     <Compile Include="Model\DragableObject.cs" />
     <Compile Include="Model\LineBez.cs" />
     <Compile Include="Model\Node.cs" />
+    <Compile Include="Model\SnapPot.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Page Include="MainWindow.xaml">
