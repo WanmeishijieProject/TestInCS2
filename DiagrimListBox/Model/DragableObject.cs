@@ -10,15 +10,15 @@ namespace DiagrimListBox.Model
 {
     public class DragableObject : INotifyPropertyChanged
     {
+        BindablePoint location;
+        BindablePoint size;
 
         public DragableObject(string Name)
         {
             this.Name = Name;
             Location = new BindablePoint() { X = 0, Y = 0, };
+            Size = new BindablePoint() { X = 100, Y = 100, };
         }
-
-        BindablePoint location;
-        
 
         public event PropertyChangedEventHandler PropertyChanged;
         protected void RaisePropertyChanged([CallerMemberName]string PropertyName = "")
@@ -36,6 +36,20 @@ namespace DiagrimListBox.Model
                 if (location != value)
                 {
                     location = value;
+                    RaisePropertyChanged();
+                }
+            }
+        }
+
+        public BindablePoint Size
+        {
+            get { return size; }
+            set
+            {
+                if (size != value)
+                {
+                    size = value;
+                    RaisePropertyChanged();
                 }
             }
         }

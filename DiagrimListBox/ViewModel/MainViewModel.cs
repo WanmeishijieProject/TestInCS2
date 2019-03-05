@@ -42,7 +42,7 @@ namespace DiagrimListBox.ViewModel
                     }
                     );
                 NodeCollect.Add(node);
-                ConnectorCollect.Add(new Connector($"ConnectorCollect{i + 1}"));
+                //ConnectorCollect.Add(new Connector($"ConnectorCollect{i + 1}"));
             }
 
             SnapPotCollect = new ObservableCollection<SnapPot>(NodeCollect.SelectMany(x => x.SnapPotList));

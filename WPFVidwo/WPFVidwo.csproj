@@ -66,6 +66,9 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="TcpCommunicationLib">
+      <HintPath>..\..\..\..\Program Files (x86)\Dimension\AutoGet\TcpCommunicationLib.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />

@@ -20,13 +20,13 @@ namespace DiagrimListBox.Model
         {
             if (this.IndexBaseZero == 0)
             {
-                this.Location.X = ParentNode.Location.X + ParentNode.NodeWidth / 2;
+                this.Location.X = ParentNode.Location.X + ParentNode.Size.X / 2;
                 this.Location.Y = ParentNode.Location.Y;
             }
             else
             {
-                this.Location.X = ParentNode.Location.X + ParentNode.NodeWidth / 2;
-                this.Location.Y = ParentNode.Location.Y + ParentNode.NodeHeight;
+                this.Location.X = ParentNode.Location.X + ParentNode.Size.X / 2;
+                this.Location.Y = ParentNode.Location.Y + ParentNode.Size.Y;
             }
         }
 

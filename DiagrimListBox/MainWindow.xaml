@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:model="clr-namespace:DiagrimListBox.Model"
+        xmlns:arrow="clr-namespace:WpfArrow;assembly=WpfArrow"
         xmlns:ignore="http://www.galasoft.ch/ignore"
         mc:Ignorable="d ignore"
         Height="600"
@@ -45,8 +46,8 @@
 
             <!--呈现具体的项目  Node-->
             <DataTemplate DataType="{x:Type model:Node}">
-                <Border  Width="{Binding NodeWidth}" 
-                         Height="{Binding NodeHeight}" 
+                <Border  Width="{Binding Size.X}" 
+                         Height="{Binding Size.Y}" 
                          Background="Yellow"
                          Padding="3">
                     <Grid >
@@ -104,7 +105,7 @@
 
             <!--呈现Line-->
             <DataTemplate DataType="{x:Type model:LineBez}">
-                <Grid>
+                <!--<Grid>
                     <Path StrokeThickness="3" x:Name="Line">
                         <Path.Stroke>
                             <SolidColorBrush Color="SeaGreen"/>
@@ -119,7 +120,9 @@
                             </PathGeometry>
                         </Path.Data>
                     </Path>
-                </Grid>
+                </Grid>-->
+                <arrow:LineArrow Start="{Binding StartPoint.PointValue}" End="{Binding EndPoint.PointValue}"
+                                 Stroke="Red" StrokeThickness="3"/>
             </DataTemplate>
 
             <!--呈现SnapPot-->
@@ -161,10 +164,11 @@
         </Grid.ColumnDefinitions>
         <ListBox Grid.Column="1" ItemsSource="{StaticResource Col}" SelectedItem="{Binding SelectedObject, Mode=OneWayToSource}"
                  PreviewMouseMove="ListBox_PreviewMouseMove"
-                 PreviewMouseDown="ListBox_PreviewMouseDown">
+                 PreviewMouseDown="ListBox_PreviewMouseDown"
+                 Name="ListBoxDiagram">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas AllowDrop="True" Background="LightBlue" IsItemsHost="True"/>
+                    <Canvas AllowDrop="True" Background="LightBlue" IsItemsHost="True" Width="3000" Height="3000"/>
                 </ItemsPanelTemplate>
             </ListBox.ItemsPanel>
             

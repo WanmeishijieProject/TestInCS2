@@ -10,16 +10,17 @@ namespace DiagrimListBox.Model
 {
     public class Node : DragableObject
     {
-        double width;
-        double height;
         List<SnapPot> snapPotList = new List<SnapPot>();
         public Node(string Name):base(Name)
         {
-           
             this.Name = Name;
-            this.NodeHeight = 200;
-            this.NodeWidth = 300;
             Location.OnPointChanged += Location_OnPointChanged;
+            Size.OnPointChanged += Size_OnPointChanged;
+        }
+
+        private void Size_OnPointChanged(object sender, BindablePoint e)
+        {
+            RecalculateSnaps();
         }
 
         private void Location_OnPointChanged(object sender, BindablePoint e)
@@ -44,29 +45,6 @@ namespace DiagrimListBox.Model
         {
             SnapPotList.ForEach(x => x.Recalculate());
 
-        }
-
-        public double NodeWidth {
-            get { return width; }
-            set {
-                if (width != value)
-                {
-                    width = value;
-                    RecalculateSnaps();
-                }
-            }
-        }
-        public double NodeHeight
-        {
-            get { return height; }
-            set
-            {
-                if (height != value)
-                {
-                    height = value;
-                    RecalculateSnaps();
-                }
-            }
         }
     }
 }
