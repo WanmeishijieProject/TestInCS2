@@ -48,6 +48,7 @@
                             IsEnabled="{Binding SystemState, Converter={StaticResource SystemState2Enable}, ConverterParameter=Start}"/>
          
                         <dxb:BarButtonItem 
+                            IsVisible="False"
                             Content="停止" 
                             RibbonStyle="Large" Glyph="./Images/stop.png"
                             Command="{Binding StopStationCommand}"
@@ -104,7 +105,9 @@
             <TextBlock Grid.Column="0" Text="版本:V1.0.0" VerticalAlignment="Center" Margin="5" Foreground="White"/>
             <TextBlock Grid.Column="1"  Text="用户" VerticalAlignment="Center" Margin="5" Foreground="White"/>
             <TextBlock Grid.Column="2" Text="{Binding DaysLeft, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window},Mode=OneWay, Converter={StaticResource Double2Text}, ConverterParameter=2}"  VerticalAlignment="Center" Margin="5" Foreground="White"/>
-            <Grid Name="StationInfoGrid" Grid.Column="3" Background="{StaticResource ThemColor}"/>
+            <Grid Name="StationInfoGrid" Grid.Column="3" Background="{StaticResource ThemColor}">
+                <TextBlock FontSize="15" Text="{Binding TextInfo}" VerticalAlignment="Center"/>
+            </Grid>
             <materialDesign:Badged Grid.Column="4" Badge="{Binding ErrorCount}" BadgeBackground="LightBlue" BadgeForeground="{Binding ErrorCount,Converter={StaticResource Int2BackgroundBrush}}" Width="150">
                 <Button Background="{Binding ErrorCount,Converter={StaticResource Int2BackgroundBrush}}" Width="150" Command="{Binding BtnWarningCommand}" Content="报警信息"/>
             </materialDesign:Badged>

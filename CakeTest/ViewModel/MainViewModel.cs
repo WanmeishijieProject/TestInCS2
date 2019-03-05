@@ -36,6 +36,7 @@ namespace CakeTest.ViewModel
         bool _showSnakeInfoBar = false;
         string LastError = "";
         string FILE_CONFIG = "./Config/SystemConfig.json";
+        string textInfo = "";
         #endregion
 
         #region Constructor
@@ -150,6 +151,22 @@ namespace CakeTest.ViewModel
         public HWindow WindowHandle
         {
             get;set;
+        }
+
+        public string TextInfo
+        {
+            get
+            {
+                return textInfo;
+            }
+            set
+            {
+                if (value != textInfo)
+                {
+                    textInfo = value;
+                    RaisePropertyChanged();
+                }
+            }
         }
         #endregion
 

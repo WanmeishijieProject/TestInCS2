@@ -334,7 +334,6 @@ namespace CakeTest.Class
                 ErrorList.Add($"FIndCamera error:{ex.Message}");
                 return CamInfoList;
             }
-
         }
 
         public void OpenCamera(HTuple CamName)
