@@ -32,7 +32,7 @@ namespace GPAP.Model.AbbCmd
         protected override void ReadProfile()
         {
             bool bRet = true;
-            bRet = double.TryParse(Paras[0], out double x);
+            bRet &= double.TryParse(Paras[0], out double x);
             bRet &= double.TryParse(Paras[1], out double y);
             bRet &= double.TryParse(Paras[2], out double z);
             if (!bRet)

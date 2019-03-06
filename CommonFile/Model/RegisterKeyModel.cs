@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using static CommonFile.CommonSoftware;
 
 namespace CommonFile.Model
@@ -66,11 +67,18 @@ namespace CommonFile.Model
                 throw new Exception("注册码不能为空");
             if (strRegisterKey.Length <= (Model.RandomKey.Length + 21))
                 throw new Exception("错误的注册码");
-            string timeRegister = strRegisterKey.Substring(len - 20,20);
-            string timelimit = strRegisterKey.Substring(len - 21, 1);
-            string randomStr = strRegisterKey.Substring(len - Model.RandomKey.Length-21, Model.RandomKey.Length);
-            string timeTamp = randomStr.Substring(5, 5);
-            string registerKey = strRegisterKey.Substring(0, len - 21 - Model.RandomKey.Length);
+
+            //string timeRegister = strRegisterKey.Substring(len - 20,20);
+            //string timelimit = strRegisterKey.Substring(len - 21, 1);
+            //string randomStr = strRegisterKey.Substring(len - Model.RandomKey.Length-21, Model.RandomKey.Length);
+            //string timeTamp = randomStr.Substring(5, 5);
+
+            string registerKey = strRegisterKey.Substring(0, 24);
+            string randomStr = strRegisterKey.Substring(24, 10);
+            string timelimit = strRegisterKey.Substring(34, 1);
+            string timeRegister = strRegisterKey.Substring(35, 20);
+            
+
             if (Enum.TryParse<EnumTimeOut>(timelimit, out EnumTimeOut timeout))
             {
                 if (long.TryParse(timeRegister, out long timeStart))
@@ -79,7 +87,7 @@ namespace CommonFile.Model
                     Model.RegisterKey = registerKey;
                     Model.RegistTimeTicks = timeStart;
                     Model.RandomKey = randomStr;
-                    Model.Timestamp5 = timeTamp;
+                    Model.Timestamp5 = randomStr.Substring(5,5);
                 }
                 else
                 {
@@ -110,8 +118,11 @@ namespace CommonFile.Model
         public bool IsTimeoutFromNow(out double DaysLeftFromRegister)
         {
             var dayLeft = TimeLimitArr[(int)TimeLimit] - TimeSpan.FromTicks(DateTime.Now.Ticks - RegistTimeTicks).TotalDays;
-            DaysLeftFromRegister = dayLeft <= 0 ? 0 : dayLeft;
-            return TimeSpan.FromTicks(DateTime.Now.Ticks - RegistTimeTicks).TotalDays > TimeLimitArr[(int)TimeLimit];
+
+            DaysLeftFromRegister = (dayLeft <= 0 ? 0 : dayLeft);
+            //MessageBox.Show($"总时间{TimeLimitArr[(int)TimeLimit]}\n已用时间{TimeSpan.FromTicks(DateTime.Now.Ticks - RegistTimeTicks).TotalDays}\n剩余时间{dayLeft}\n总的剩余时间{DaysLeftFromRegister}");
+
+            return DaysLeftFromRegister <=0;
         }
 
         public override bool Equals(object obj)

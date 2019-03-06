@@ -24,6 +24,7 @@ namespace CakeTest
                 InitializeComponent();
                 Closing += (s, e) => ViewModelLocator.Cleanup();
                 OnResizeEventHandler += MainWindow_OnResizeEventHandler;
+
                 if (!CommonFile.RegisterForm.CheckIsTimeout(out double dayleft))
                 {
                     Close();

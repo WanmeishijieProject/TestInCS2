@@ -134,10 +134,10 @@
                             <Path Stroke="Black" Fill="Red" RenderTransformOrigin="0.0,0.0">
                                 <Path.Data>
                                     <PathGeometry>
-                                        <PathFigure StartPoint="-10,0">
+                                        <PathFigure StartPoint="-2,0">
                                             <ArcSegment IsLargeArc="True"
-                                                            Size="10, 10"
-                                                            Point="10, 0"
+                                                            Size="2, 2"
+                                                            Point="2, 0"
                                                             SweepDirection="Clockwise" 
                                                             />
                                         </PathFigure>

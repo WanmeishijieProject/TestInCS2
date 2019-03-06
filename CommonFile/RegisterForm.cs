@@ -26,12 +26,20 @@ namespace CommonFile
             try
             {
                 IsCheckSuccess = software.CheckRegisterKey(textbox_MachineKey.Text, textBox_RegisterKey.Text);
-                MessageBox.Show("注册成功");
-                Close();
+                if (IsCheckSuccess)
+                {
+                    MessageBox.Show("注册成功");
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("注册失败");
+                }
+                
             }
-            catch
+            catch(Exception ex)
             {
-                MessageBox.Show("注册失败");
+                MessageBox.Show($"注册失败{ex.Message}");
                 IsCheckSuccess = false;
             }
         }
@@ -47,19 +55,24 @@ namespace CommonFile
         public static bool CheckIsTimeout(out double DaysLeft)
         {
             var Ret = software.CheckFile(out DaysLeft);
+            //MessageBox.Show($"{Ret}");
             if (!Ret)
             {
                 var dlg = new RegisterForm();
                 dlg.ShowDialog();
+
+                //MessageBox.Show("1");
+
                 if (IsCheckSuccess)
                 {
-                    
+                    //MessageBox.Show("2");
                     Ret = true;
                     DaysLeft = software.DaysLeft;
                     dlg.Close();
                 }
                 else
                 {
+                    //MessageBox.Show("3");
                     Ret = false;
                     DaysLeft = 0;
 

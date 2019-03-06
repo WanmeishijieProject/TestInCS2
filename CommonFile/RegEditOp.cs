@@ -9,98 +9,80 @@ namespace CommonFile
 
     public class RegEditOp
     {
-        public void WriteRegisterValue(string KeyValue)
+        string SubKey_MeachineKeyName = "smx";
+        string Key_MeachineKeyName = "smx";
+        string Key_RemainTimeName = "smx_Remain";
+
+        public RegEditOp() { }
+        public RegEditOp(string SubKey, string MKName, string RTName)
         {
-            
-            if (IsRegistryKeyExist("smx"))
-            {
-                RegistryKey hklm = Registry.CurrentUser;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
-                hkSoftWare.SetValue("smx", KeyValue, RegistryValueKind.String);
-                hklm.Close();
-                hkSoftWare.Close();
-            }
-            else
-            {
-                RegistryKey hklm = Registry.CurrentUser;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
-                hkSoftWare.CreateSubKey("smx");
-                hklm.SetValue("smx", KeyValue, RegistryValueKind.String);
-                hklm.Close();
-                hkSoftWare.Close();
-            }
+            SubKey_MeachineKeyName = SubKey;
+            Key_MeachineKeyName = MKName;
+            Key_RemainTimeName = RTName;
+        }
+
+        public void WriteRegisterValue(string Value)
+        {
+            SetRegValue(SubKey_MeachineKeyName, Key_MeachineKeyName, Value);
         }
 
         public string ReadRegisterValue()
         {
-            if (IsRegistryKeyExist("smx"))
-            {
-                RegistryKey hklm = Registry.CurrentUser;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
-                var str = hkSoftWare.GetValue("smx");
-                hklm.Close();
-                hkSoftWare.Close();
-                if(str!=null)
-                    return str.ToString();
-            }
-            return "";
+            return GetRegValue(SubKey_MeachineKeyName, Key_MeachineKeyName);
         }
 
-        public bool IsRegistryKeyExist(string sKeyName)
+        public bool IsRegistryKeyExist(string ValueName)
         {
-            string[] sKeyNameColl;
-            RegistryKey hklm = Registry.CurrentUser;
-            RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
-            sKeyNameColl = hkSoftWare.GetSubKeyNames(); //获取SOFTWARE下所有的子项
-            foreach (string sName in sKeyNameColl)
-            {
-                if (sName == sKeyName)
-                {
-                    hklm.Close();
-                    hkSoftWare.Close();
-                    return true;
-                }
-            }
-            hklm.Close();
-            hkSoftWare.Close();
-            return false;
+            return GetRegValue(SubKey_MeachineKeyName, Key_MeachineKeyName) !="";
         }
 
 
-        public void WriteRemainTime(string KeyValue)
+        public void WriteRemainTime(string Value)
         {
-            if (IsRegistryKeyExist("smx_Remain"))
-            {
-                RegistryKey hklm = Registry.CurrentUser;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
-                hkSoftWare.SetValue("smx_Remain", KeyValue, RegistryValueKind.String);
-                hklm.Close();
-                hkSoftWare.Close();
-            }
-            else
-            {
-                RegistryKey hklm = Registry.CurrentUser;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
-                hkSoftWare.CreateSubKey("smx_Remain");
-                hklm.SetValue("smx_Remain", KeyValue, RegistryValueKind.String);
-                hklm.Close();
-                hkSoftWare.Close();
-            }
+            SetRegValue(SubKey_MeachineKeyName, Key_RemainTimeName, Value);
         }
 
         public string ReadUsedTime()
         {
-            if (IsRegistryKeyExist("smx_Remain"))
+            return GetRegValue(SubKey_MeachineKeyName, Key_RemainTimeName);
+        }
+  
+
+        private bool SetRegValue(string subKey, string Key, string Value)
+        {
+            bool bRet = false;
+            RegistryKey hklm = Registry.CurrentUser;
+            RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
+            var SubKey = hkSoftWare.OpenSubKey(subKey, true);
+            if (SubKey == null)
             {
-                RegistryKey hklm = Registry.CurrentUser;
-                RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
-                var str = hkSoftWare.GetValue("smx_Remain");
-                hklm.Close();
-                hkSoftWare.Close();
-                if (str != null)
-                    return str.ToString();
+                SubKey = hkSoftWare.CreateSubKey(subKey,RegistryKeyPermissionCheck.ReadWriteSubTree);
             }
-            return "";
+            if (SubKey != null)
+            {
+                SubKey.SetValue(Key, Value);
+                SubKey.Close();
+                hkSoftWare.Close();
+                hklm.Close();
+                bRet = true;
+            }
+            return bRet;
+
+        }
+        private string GetRegValue(string subKey, string Key)
+        {
+            string strRet = "";
+            RegistryKey hklm = Registry.CurrentUser;
+            RegistryKey hkSoftWare = hklm.OpenSubKey(@"Software", true);
+            var SubKey = hkSoftWare.OpenSubKey(subKey, true);
+            if (SubKey != null)
+            {
+                strRet = SubKey.GetValue(Key, "").ToString();
+                SubKey.Close();
+                hkSoftWare.Close();
+                hklm.Close();
+            }
+            return strRet;
         }
     }
 }

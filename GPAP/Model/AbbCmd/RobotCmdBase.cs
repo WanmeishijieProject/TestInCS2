@@ -71,14 +71,22 @@ namespace GPAP.Model.AbbCmd
             FromString(sb.ToString());
         }
 
+        /// <summary>
+        /// 将消息设置为未收到返回值状态
+        /// </summary>
         public void ResetMessageState()
         {
             SyncEvent.Reset();
         }
+
+        /// <summary>
+        /// 确定收到返回值状态
+        /// </summary>
         public void SetMessageState()
         {
             SyncEvent.Set();
         }
+
         public bool WaitCmdRecved(int MiliSecond)
         {
             return SyncEvent.WaitOne(MiliSecond);

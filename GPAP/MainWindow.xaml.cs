@@ -128,6 +128,11 @@ namespace GPAP
             var ret=ExcuteCmd(CmdStop) as MsgStopRobot;
         }
 
+        /// <summary>
+        /// 阻塞函数
+        /// </summary>
+        /// <param name="cmd">返回的也是RobotCmdBase类型</param>
+        /// <returns></returns>
         private RobotCmdBase ExcuteCmd(RobotCmdBase cmd)
         {
             try

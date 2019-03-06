@@ -10,7 +10,6 @@ namespace GPAP.Model.AbbCmd
     public interface IRobotCmd
     {
         EnumRobotCmd I_Cmd { get; set; }
-
         object GenEmptyCmd();
     }
 }

@@ -14,10 +14,13 @@ namespace CommonFile
 
     public class CommonSoftware
     {
-        private long TimeStart = DateTime.Now.Ticks;
+        private long TimeStart = 0;
         private HardwareInfo info = new HardwareInfo();
+        private static string RGName = "mk";
+        private static string TUName = "tu";
+        private static string SubKey = "smx";
 #if REG
-        private RegEditOp RegEditor = new RegEditOp();
+        private RegEditOp RegEditor = new RegEditOp(SubKey,RGName,TUName);
 #endif
        
         string FilePath = "zrd.data";
@@ -37,7 +40,8 @@ namespace CommonFile
         {
 #if REG
             //TimeTicksUsed=
-            if (RegEditor.IsRegistryKeyExist("smx_Remain"))
+            TimeStart = DateTime.Now.Ticks;
+            if (RegEditor.IsRegistryKeyExist(TUName))
             {
                 var strTimeUsed = RegEditor.ReadUsedTime();
                 if (long.TryParse(strTimeUsed, out long result))
@@ -59,10 +63,12 @@ namespace CommonFile
         ~CommonSoftware()
         {
 #if REG
-            if (DateTime.Now.Ticks - TimeStart > 0)
+            var NowTicks = DateTime.Now.Ticks;
+            if (NowTicks - TimeStart > 0)
             {
-                var NowTicks = DateTime.Now.Ticks;
+               // MessageBox.Show(TimeTicksUsed.ToString());
                 TimeTicksUsed += (NowTicks - TimeStart);
+                //MessageBox.Show((NowTicks - TimeStart).ToString());
                 RegEditor.WriteRemainTime(TimeTicksUsed.ToString());
             }
 #endif
@@ -89,12 +95,13 @@ namespace CommonFile
             var ClientMachineKey=MachineNumberModel.FromString(MachineKey);
             var registerKeyModel = new RegisterKeyModel()
             {
-                RegisterKey = info.GetRNum(),
-                TimeLimit = Timeout,
-                Timestamp5 = ClientMachineKey.Timestamp5,
-                RegistTimeTicks = ClientMachineKey.Timestamp20,
-
+                RegisterKey = info.GetRNum(ClientMachineKey.HardwareID, false),
+                TimeLimit = Timeout,    //1
+                Timestamp5 = ClientMachineKey.Timestamp5,   //5
+                RegistTimeTicks = ClientMachineKey.Timestamp20, //20
+                //BFEBFBFF000906EA52176B8A006368747630831805632834385645
             };
+            //MessageBox.Show($"生成的注册码:{ClientMachineKey.HardwareID}\n{registerKeyModel.RegisterKey}");
             return registerKeyModel.ToString();
         }
 
@@ -107,70 +114,66 @@ namespace CommonFile
         {
             var MachineModelIn = MachineNumberModel.FromString(MachineKey);
             var ModelIn = RegisterKeyModel.FromString(RegisterKey);
-            if (ModelIn.Timestamp5 != MachineModelIn.Timestamp5)
-                throw new Exception("已经过时的注册码");
 
-            if (ModelIn.RegisterKey == info.GetRNum())
+            //MessageBox.Show($"{ModelIn.Timestamp5}\n{MachineModelIn.Timestamp5}\n");
+
+
+            if (ModelIn.Timestamp5 != MachineModelIn.Timestamp5)
             {
+                
+                throw new Exception("已经过时的注册码");
+            }
+
+            string ClacRegisterKey = info.GetRNum(MachineModelIn.HardwareID, true);
+
+            //MessageBox.Show($"获取的注册码:{MachineModelIn.HardwareID}\n{ClacRegisterKey}");
+            //说明从注册信息里读的是正确的，但是再次获取机器码就不对了
+            //MessageBox.Show($"4\n{ModelIn.RegisterKey}\n{ClacRegisterKey}\n{ModelIn.RegisterKey.Length}\n{ClacRegisterKey.Length}");
+            if (ModelIn.RegisterKey.Trim() == ClacRegisterKey.Trim())
+            {
+                //注册成功的时候写入文件
+                
+
                 using (var s = new FileStream(FilePath, FileMode.Create, FileAccess.Write))
                 {
                     var bf = new BinaryFormatter();
                     bf.Serialize(s, ModelIn);
                     RegEditor.WriteRegisterValue(RegisterKey);
+
                     RegEditor.WriteRemainTime("0");
                     DaysLeft= TimeArr[(int)ModelIn.TimeLimit];
+                    return true;
                 }
             }
-            return true;  
-            #region 废弃
-            ////去掉后面的随机数     
-            //EnumTimeOut TimeOutType = EnumTimeOut.TwoDay;
-            //var CalcKwy = GenPswd(GetMachineKey(), EnumTimeOut.TwoDay);
-            //if (RegisterKey.Length!= CalcKwy.Length)
-            //    throw new Exception("请输入正确的注册码");
-            //if (CalcKwy.Substring(0, CalcKwy.Length - 5) != RegisterKey.Substring(0, RegisterKey.Length - 5))
-            //    throw new Exception("请输入正确的注册码");
-
-
-            //RegisterKey = RegisterKey.Substring(0, RegisterKey.Length - 4);
-
-            //if (int.TryParse(RegisterKey.Substring(RegisterKey.Length - 1, 1), out int nTimeout))
-            //{
-            //    if (Enum.IsDefined(typeof(EnumTimeOut), nTimeout))
-            //{
-            //        TimeOutType = (EnumTimeOut)nTimeout;
-            //        var Content = $"{RegisterKey.Substring(0, RegisterKey.Length - 1)}&{(int)TimeOutType}&{DateTime.Now.Ticks}";
-            //        File.WriteAllText(FilePath, Content);
-
-            //        this.DaysLeft = TimeArr[nTimeout];
-            //        return true;
-            //    }
-            //    else
-            //        throw new Exception("请输入正确的注册码");
-            //}
-            //else
-            //    throw new Exception("请输入正确的注册码");
-            #endregion
+            return false;  
         }
 
         public bool CheckFile(out double DaysLeft)
         {
             DaysLeft = 0;
-            if (File.Exists(FilePath) && RegEditor.IsRegistryKeyExist("smx"))
+            if (File.Exists(FilePath) && RegEditor.IsRegistryKeyExist(RGName))
             {
+                //MessageBox.Show("10");
                 using (var s = new FileStream(FilePath, FileMode.Open))
                 {
                     var bf = new BinaryFormatter();
                     RegisterKeyModel ModelInFile= bf.Deserialize(s) as RegisterKeyModel;
                     var ModelInReg =RegisterKeyModel.FromString(RegEditor.ReadRegisterValue());
+
+                    //MessageBox.Show($"10\n{ModelInFile.ToString()}\n{ModelInReg.ToString()}");
                     if (ModelInFile == ModelInReg)
                     {
+                        //MessageBox.Show("11");
                         //总时间-(读取Now-注册时间)
                         if (!ModelInFile.IsTimeoutFromNow(out double DaysLeft1))
                         {
+                            //MessageBox.Show("12");
                             long ticks = long.Parse(RegEditor.ReadUsedTime());
+
+                            //以下是防止客户篡改系统时间
                             if (TimeSpan.FromTicks(ticks).TotalDays <= TimeArr[(int)ModelInFile.TimeLimit] )
                             {
+                                //MessageBox.Show("13");
                                 //这个时间是剩余的使用时间
                                 var DaysLeft2 = TimeArr[(int)ModelInFile.TimeLimit]-TimeSpan.FromTicks(ticks).TotalDays;
                                 DaysLeft = Math.Min(DaysLeft1,DaysLeft2);
@@ -185,85 +188,7 @@ namespace CommonFile
                 }
             }
             return false;
-            #region 废弃
-//            DaysLeft = 0;
-//#if REG
-//            if (File.Exists(FilePath) && RegEditor.IsRegistryKeyExist("smx"))
-//#endif
-//            {
-//#if TEST
-//                MessageBox.Show("1");
-//#endif
-//                var content = File.ReadAllText(FilePath);
-//#if REG
-//                var Msg = RegEditor.ReadRegisterValue();
-//#endif
-//#if TEST
-//                MessageBox.Show(Msg);
-//#endif
-//#if REG
-//                if (content == Msg)
-//#endif
-//                {
-//                    var List = content.Split('&');
-//                    if (List.Count() == 3)
-//                    {
-//#if TEST
-//                        MessageBox.Show("2");
-//#endif
-//                        var regKey = List[0];
-//                        var timeout = List[1];
-//                        var starttime = List[2];
-//                        var CalcKwy = this.GenRegisterKey(GetMachineKey(), EnumTimeOut.TwoDay);
-
-//                        CalcKwy = CalcKwy.Substring(0, CalcKwy.Length - 5);
-//#if TEST
-//                        MessageBox.Show($"{CalcKwy}\n{regKey}");
-//#endif
-//                        if (CalcKwy == regKey)
-//                        {
-//#if TEST
-//                            MessageBox.Show("3");
-//#endif
-//                            if (long.TryParse(starttime, out long nStartTicks))
-//                            {
-//#if TEST
-//                                MessageBox.Show("4");
-//#endif
-//                                if (int.TryParse(timeout, out int nTimeout))
-//                                {
-//#if TEST
-//                                    MessageBox.Show("5");
-//#endif
-//                                    var Days = TimeSpan.FromTicks(DateTime.Now.Ticks - nStartTicks).TotalDays;
-//                                    DaysLeft = TimeArr[nTimeout];
-//                                    this.DaysLeft = TimeArr[nTimeout];
-//                                    if (Days <= DaysLeft)
-//                                    {
-//#if REG
-//                                        long ticks = long.Parse(RegEditor.ReadUsedTime());
-//#else
-//                                        long ticks = 0;
-//#endif
-//                                        if (TimeSpan.FromTicks(ticks).TotalDays <= DaysLeft)
-//                                        {
-//                                            DaysLeft = DaysLeft - TimeSpan.FromTicks(ticks).TotalDays;
-//                                            //MessageBox.Show($"使用天数{DaysLeft}");
-//                                            return true;
-//                                        }
-//#if TEST
-//                                        MessageBox.Show($"使用天数{DaysLeft}");
-//#endif
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-
-//            return false;
-            #endregion
+     
         }
 
         public double DaysLeft { get; private set; }
